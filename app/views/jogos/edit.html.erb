@@ -1,0 +1,29 @@
+<div class="page-header">
+  <%= content_tag :h3, "Editar Jogos da Rodada "+@rodada.numero, :class => "title"  %>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Time(CASA)</th>
+      <th>Placar(CASA)</th>
+      <th>Vs.</th>
+      <th>Placar(FORA)</th>
+      <th>Time(FORA)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= form_for @jogos, :url => bolao_rodada_jogos_path, :html=>{:method => :put} do |f| %>
+      <% for @jogo in @jogos %>
+          <%= render "form_line", :locals => {f => f} %>
+      <% end %>
+      <tr>
+        <% if @rodada.apostas_encerradas? %>
+          <td colspan=2  data-step=1 data-intro=" Se selecionado, será enviado um e-mail para cada participante do bolão com a pontuação que ele fez na rodada."> <%= check_box_tag('check_email', 'yes', false) %>Enviar email para participantes </td>
+          <td colspan=3 data-step=2 data-intro="Ao clicar, serão atualizados os resultados e calculada a pontuação dos jogadores."><%= submit_tag "Salvar Edição e (re)calcular pontuação dos jogadores", :class => "btn btn-primary" %></td>
+        <% else %>
+          <td colspan=5><%= submit_tag "Salvar Edição", :class => "btn btn-primary" %><td>
+        <% end %>
+      <tr>
+    <% end %>
+  </tbody>
+</table>

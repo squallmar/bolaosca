@@ -1,0 +1,22 @@
+<div class="page-header">
+  <h1>Palpites dos resultados dos Jogos da rodada <%= @rodada.numero %></h1>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Time(CASA)</th>
+      <th>Placar(CASA)</th>
+      <th>Vs.</th>
+      <th>Placar(FORA)</th>
+      <th>Time(FORA)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= form_for @jogos, :url => bolao_rodada_palpites_path, :html=>{:method => :put} do |f| %>
+      <% for @jogo in @jogos %>
+          <%= render "form_line", :locals => {f => f} %>
+      <% end %>
+      <tr><td colspan=4> <%= submit_tag "Salvar Apostas", :class => "btn btn-primary" %> <td><tr>
+    <% end %>
+  </tbody>
+</table>

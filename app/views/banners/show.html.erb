@@ -1,0 +1,31 @@
+<%- model_class = Banner -%>
+<div class="page-header">
+   <%= content_tag :h3,  "Banner", :class => "title"  %>
+</div>
+
+<dl class="dl-horizontal">
+  <dt><strong><%= model_class.human_attribute_name(:nome) %>:</strong></dt>
+  <dd><%= @banner.nome %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:count_views) %>:</strong></dt>
+  <dd><%= @banner.count_views %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:image) %>:</strong></dt>
+  <dd><%= @banner.image %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:link) %>:</strong></dt>
+  <dd><%= @banner.link %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:text) %>:</strong></dt>
+  <dd><%= @banner.text %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:tipo) %>:</strong></dt>
+  <dd><%= @banner.tipo %></dd>
+</dl>
+
+<div class="form-actions">
+  <%= link_to t('.back', :default => t("helpers.links.back")),
+              banners_path, :class => 'btn'  %>
+  <%= link_to t('.edit', :default => t("helpers.links.edit")),
+              edit_banner_path(@banner), :class => 'btn' %>
+  <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+              banner_path(@banner),
+              :method => 'delete',
+              :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+              :class => 'btn btn-danger' %>
+</div>

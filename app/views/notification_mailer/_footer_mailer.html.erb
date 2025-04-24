@@ -1,0 +1,20 @@
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <% mail_content = capture do %>
+           Por
+          <p id="all_ws">
+            <!-- <p>Tel: (22) 9915-3354</p> -->
+          </p>
+        <% end %>
+        <%= mail_to 'marcelmendes05@gmail.com', mail_content,:target => "blank", :class => 'logo_all_ws' %>
+      </td>
+    </tr>
+
+  </table>
+</body>
+</html>

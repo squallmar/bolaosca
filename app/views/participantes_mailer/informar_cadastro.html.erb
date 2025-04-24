@@ -1,0 +1,10 @@
+<%= render :partial => "/notification_mailer/topo_mailer" %>
+<h1>Parabéns, <%= @user.nome %></h1>
+
+<b>
+ Você agora está participando do Bolão <%= @bolao.titulo %>
+<br>
+<%= link_to root_url, root_url %>
+</b>
+
+Caso não tenha uma conta ativada no sistema, ative-a com o link que receberá em outro email.<%= render :partial => "/notification_mailer/footer_mailer" %>

@@ -1,0 +1,32 @@
+<%= form_with(model: [@bolao, @rodada, @jogo || @rodada.jogos.build], 
+             local: true, 
+             html: { class: 'form-horizontal' }) do |f| %>
+  <tr>
+    <td>
+      <%= f.select :time_home, Jogo::TIMES, 
+                  { prompt: 'Time da Casa' }, 
+                  class: "form-control" %>
+    </td>
+    <td>
+      <%= f.number_field :placar_home, 
+                        class: "form-control", 
+                        style: "width: 60px",
+                        readonly: !@rodada.apostas_encerradas? %>
+    </td>
+    <td><b>x</b></td>
+    <td>
+      <%= f.number_field :placar_away, 
+                        class: "form-control", 
+                        style: "width: 60px",
+                        readonly: !@rodada.apostas_encerradas? %>
+    </td>
+    <td>
+      <%= f.select :time_away, Jogo::TIMES, 
+                  { prompt: 'Time Visitante' }, 
+                  class: "form-control" %>
+    </td>
+    <td>
+      <%= f.submit '+ Jogo', class: 'btn btn-primary pull-right' %>
+    </td>
+  </tr>
+<% end %>

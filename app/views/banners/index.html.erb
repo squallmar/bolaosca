@@ -1,0 +1,40 @@
+<%- model_class = Banner -%>
+<div class="page-header">
+   <%= content_tag :h3,"Banners - Publicidade", :class => "title"  %>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Nome:</th>
+      <th>Link:</th>
+      <th>Texto:</th>
+      <th>Contador de clicks:</th>
+      <th>Tipo:</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @banners.each do |banner| %>
+      <tr>
+        <td><%= link_to (banner.nome.empty? ? "Sem nome" : banner.nome) , banner_path(banner) %></td>
+        <td><%= banner.link %></td>
+        <td><%= banner.text %></td>
+        <td><%= banner.count_views %></td>
+        <td><%= banner.tipo %></td>
+        <td>
+          <%= link_to t('.edit', :default => t("helpers.links.edit")),
+                      edit_banner_path(banner), :class => 'btn btn-mini' %>
+          <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+                      banner_path(banner),
+                      :method => :delete,
+                      :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+                      :class => 'btn btn-mini btn-danger' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to t('.new', :default => t("helpers.links.new")),
+            new_banner_path,
+            :class => 'btn btn-primary' %>

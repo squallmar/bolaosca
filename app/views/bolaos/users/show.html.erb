@@ -1,0 +1,45 @@
+<div class="page-header">
+  <div class="avatar_show">
+    <%= image_tag(@user.avatar? ? @user.avatar.thumb.url : no_image_url) %>
+  </div>
+
+  <h3 style="display: inline !important;" class="title"><%= @user.apelido || @user.nome %></h3>
+  <%= render "comparar" %>
+</div>
+<dl class="dl-horizontal">
+  <dt><strong>Apelido:</strong></dt>
+  <dd><%= @user.apelido %></dd>
+  <dt><strong>Nome:</strong></dt>
+  <dd><%= @user.nome %></dd>
+
+  <% if @user.opcao.mostrar_email %>
+    <dt><strong>Email:</strong></dt>
+    <dd><%= mail_to @user.email, @user.email,:target => "_blank]" %></dd>
+  <% end -%>
+</dl>
+
+  <h3 class="title">PONTUAÇÃO NO BOLÃO</h3>
+  <i class="badge icon-4x pull-right badge-info">Total  <%= @pontuacao %></i>
+
+  <table class="table table-striped tabela_rodada">
+    <thead>
+      <tr>
+        <th style=" width: 10px; "><%= sortable "rodada_id", "Rodada" %></th>
+        <th><%= sortable "pontos", "Pontos na Rodada" %></th>
+      </tr>
+    </thead>
+     <tbody>
+        <% @pontuacao_nas_rodadas.each  do |pos| %>
+          <tr>
+            <td><%= link_to pos.rodada.numero,bolao_rodada_path(@bolao, pos.rodada) %></td>
+            <td><%= link_to pos.pontos ,bolao_rodada_palpites_path(@bolao, pos.rodada,:user_id=>@user.id) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+<div class="form-actions">
+  <%= link_to t('.back', :default => t("helpers.links.back")),
+              admin? ? users_path : :back , :class => 'btn'  %>
+  <%= (link_to "Mais informações", @user,:class => 'btn btn-inverse btn-mini') if admin? %>
+</div>

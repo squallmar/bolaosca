@@ -1,0 +1,17 @@
+<%= render :partial => "/notification_mailer/topo_mailer" %>
+ <%= link_to "<H3>BOLÃO - SCA</H3>".html_safe, root_url %>
+ <HR>
+<h1>Olá,</h1>
+
+<b> <%= @nome + " (#{@email})" %> gostaria de participar do portal BOLAO-SCA e te enviou a seguinte mensagem:<b>
+  <br>
+ <b>Texto:</b><br> <%= @texto %><br>
+ <br>
+ <br>
+ <b>Email: </b><br><%= @email %><br>
+<br>
+<br>
+ <%= link_to "BOLÃO - SCA", root_url %>
+</b>
+
+<%= render :partial => "/notification_mailer/footer_mailer" %>

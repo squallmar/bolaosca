@@ -1,0 +1,10 @@
+<%= render :partial => "/notification_mailer/topo_mailer" %><h1>Olá, </h1>
+
+<b>
+ <%= @nome %> te enviou a seguinte mensagem:<br>
+ Assunto: <%= @assunto %><br>
+ Texto: <%= @texto %><br>
+ Email: <%= @email %><br>
+<br>
+</b>
+<%= render :partial => "/notification_mailer/footer_mailer" %>

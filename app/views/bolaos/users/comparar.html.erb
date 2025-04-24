@@ -1,0 +1,49 @@
+<h3 class="title">COMPARAÇÃO</h3>
+<hr>
+<div class="page-header">
+  <div class="avatar_show">
+    <%= image_tag(@user.avatar? ? @user.avatar.thumb.url : no_image_url) %>
+  </div>
+  <h5 style="display: inline-block !important; text-align: center; width: 65%;" class="title"><%= (@user.apelido || @user.nome)+" Vs. "+(@other_user.apelido || @other_user.nome) %></h3>
+  <div class="avatar_show" style="float:right">
+    <%= image_tag(@other_user.avatar? ? @other_user.avatar.thumb.url : no_image_url) %>
+  </div>
+</div>
+
+  <i class="badge icon-4x pull-left badge-<%= 'info' if @pontuacao >= @other_pontuacao  %>">Total  <%= @pontuacao %></i>
+  <i class="badge icon-4x pull-right badge-<%= 'info' if @other_pontuacao >= @pontuacao  %>">Total  <%= @other_pontuacao %></i>
+
+  <table class="table table-striped tabela_rodada">
+    <thead>
+      <tr>
+        <td></td>
+        <td><%= link_to (@user.apelido || @user.nome), bolao_user_path(@user), :class=>"label label-info" %></td>
+        <td></td>
+        <td><%= link_to (@other_user.apelido || @other_user.nome), bolao_user_path(@other_user), :class=>"label label-info" %></td>
+      </tr>
+      <tr>
+        <th style=" width: 10px; "><%= sortable "id", "Rodada" %></th>
+        <th><%#= sortable "pontos", "Pontos na Rodada" %>Pontos na Rodada</th>
+        <th>Vs.</th>
+        <th><%#= sortable "pontos", "Pontos na Rodada" %>Pontos na Rodada</th>
+      </tr>
+    </thead>
+     <tbody>
+      <%# binding.pry %>
+        <% @rodadas.each_with_index do |rodada,i| %>
+          <tr>
+            <td><%= link_to rodada.numero, bolao_rodada_path(@bolao, rodada) %></td>
+            <% @linha = @pontuacao_nas_rodadas.find_all {|a| a.rodada_id ==  rodada.id } %>
+            <td><%= @linha.present? ? link_to(@linha.first.pontos ,bolao_rodada_palpites_path(@bolao,rodada,:user_id=>@user.id)) : '0' %></td>
+            <td>x</td>
+            <% @linha = @other_pontuacao_nas_rodadas.find_all {|a| a.rodada_id ==  rodada.id } %>
+            <td><%= @linha.present? ? link_to(@linha.first.pontos ,bolao_rodada_palpites_path(@bolao,rodada,:user_id=>@other_user.id)) : '0' %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+<div class="form-actions">
+  <%= link_to t('.back', :default => t("helpers.links.back")),
+               :back , :class => 'btn'  %>
+</div>

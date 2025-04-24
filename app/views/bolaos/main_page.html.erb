@@ -1,0 +1,77 @@
+<%- model_class = Bolao -%>
+<div class="page-header">
+    <%= content_tag :h3, @bolao.titulo, :class => "title"  %>
+</div>
+
+<dl class="dl-horizontal">
+  <dt><strong><%= model_class.human_attribute_name(:data_inicio) %>:</strong></dt>
+  <dd><%= l @bolao.data_inicio %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:data_final) %>:</strong></dt>
+  <dd><%= l @bolao.data_final %></dd>
+</dl>
+<hr>
+<br>
+
+
+<div class="post">
+      <% unless @classificacao.nil? || @classificacao.empty? %>
+        <div id="classificacao">
+          <%=content_tag(:h4,  "Classificação" , :class=> "title"  )%>
+          <table class="table table-striped mini"
+            <thead>
+              <tr>
+                <th>Pos</th>
+                <th>Apelido</th>
+                <th>Pontos</th>
+                <th>Máx</th>
+              </tr>
+            </thead>
+          <tbody>
+            <% @classificacao.each_with_index do |pos,i| %>
+              <tr>
+                <td><%= (i+1).to_s+'º' %></td>
+                <td><%= link_to (pos["apelido"] || pos["nome"]),
+                  bolao_user_path(@bolao, pos["id"]) %></td>
+                <td><%= pos["soma"] %></td>
+                <td><%= pos["maximo"] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+          </table>
+          <%= link_to "Ver Classificação Geral", classificacao_bolao_path(@bolao), :class=>"btn btn-mini btn-primary pull-right" %>
+        </div>
+      <% end -%>
+
+      <% unless @bolao.rodadas.empty? %>
+        <div id="rodadas">
+          <%=content_tag(:h4,  "Rodadas", :class=> "title"  )%>
+              <table class="table table-striped mini rodada">
+                <thead>
+                  <tr>
+                    <th>Rodada</th>
+                    <th>Ínicio das Apostas</th>
+                    <th>Fim das Apostas</th>
+                    <th>Situação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @bolao.rodadas[0..10].each do |rodada| %>
+                    <tr>
+                      <td><%= link_to(rodada.numero ,bolao_rodada_path(@bolao,rodada))%></td>
+                      <td><%= link_to(rodada.data_inicio_apostas.strftime("%a ,%d/%m/%y %H:%M") ,bolao_rodada_path(@bolao,rodada))%></td>
+                      <td><%= link_to(rodada.data_final_apostas.strftime("%a ,%d/%m/%y %H:%M") ,bolao_rodada_path(@bolao,rodada))%></td>
+                      <td><p><%= situacao rodada %></p></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <%= link_to "Ver Rodadas", bolao_rodadas_path(@bolao),:class=>"btn btn-mini btn-primary pull-right" %>
+        </div>
+      <% end %>
+  </div>
+
+
+<div class="form-actions">
+  <%= link_to t('.back', :default => t("helpers.links.back")),
+              bolaos_path, :class => 'btn'  %>
+</div>

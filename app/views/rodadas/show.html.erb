@@ -1,0 +1,90 @@
+<%= content_tag :p, (@bolao == bolao_atual ? 'Bolão Atual - ' : '') + @bolao.titulo, :class => "label label-success" %>
+<%- model_class = Rodada -%>
+<%= content_tag :p, 'Rodada Atual do Bolão', :class => "label label-success" if @rodada == rodada_atual(@bolao.id) %>
+<div class="page-header">
+   <%= content_tag :h3, "Rodada " + @rodada.numero, :class => "title"  %>
+<br>
+<i class="icon-2x icon-time badge" style="padding: 10px; background:rgba(0,0,0,.3)">   <%= situacao @rodada %></i>
+<br>
+</div>
+<br>
+<dl class="dl-horizontal" style=" float: left; width: 50% !important; ">
+  <dt><strong><%= model_class.human_attribute_name(:data_inicio_apostas) %>:</strong></dt>
+  <dd><%= @rodada.data_inicio_apostas.strftime("%d/%m/%y %H:%M, %A") %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:data_final_apostas) %>:</strong></dt>
+  <dd><%= @rodada.data_final_apostas.strftime("%d/%m/%y %H:%M, %A") %></dd>
+</dl>
+
+<%= render 'classificacao' if @rodada.apostas_encerradas? and @classificacao.present? %>
+
+<% if admin? %>
+  <div style="clear:both">
+    <br>
+    <%= link_to " Editar Rodada", edit_bolao_rodada_path(@bolao, @rodada),
+                :class => 'btn  icon-edit', :"data-intro" => "Você poderá editar o número da rodada, a data de início de apostas e data final de apostas." %> <br><br>
+    <%= link_to " Notificar participantes dos prazos de aposta", notificar_participantes_bolao_rodada_url,
+                :class => 'btn  icon-envelope', :"data-intro" => "Ao clicar, será enviado um email para todos os participantes com o prazo para realizarem apostas nessa rodada. " %>
+              <br><br>
+    <%= link_to " Apagar rodada",
+              bolao_rodada_path(@bolao,@rodada),
+              :method => 'delete',
+              :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+              :class => 'btn btn-danger  icon-trash',  :"data-intro" => "A rodada só poderá ser apagada antes da data de início e de fim de apostas." %>
+  </div>
+<% end -%>
+<br>
+<hr style="clear: both">
+<%= link_to ' Escolher Palpites', apostando_bolao_rodada_palpites_path(@bolao, @rodada), :style => 'display:block', :class=> "btn icon-legal icon-2x icon-white btn-success" if @rodada.apostas_abertas?  %>
+<%= link_to ' Ver minhas apostas', bolao_rodada_palpites_path(@bolao, @rodada), :class=> "btn icon-beer icon-white btn-success pull-right" if user_signed_in? && !@rodada.apostas_abertas? and current_user.palpites.da_rodada(@rodada.id).present? %>
+
+
+<h5 class="title">Jogos:</h5>
+
+<% if @rodada.jogos.any? %>
+  <table class="table table-striped tabela_rodada">
+    <thead>
+      <tr>
+        <th>Time(CASA)</th>
+        <th>Placar(CASA)</th>
+        <th>Vs.</th>
+        <th>Placar(FORA)</th>
+        <th>Time(FORA)</th>
+        <% if admin? %>
+          <th><i class="icon-warning-sign"></i> Apagar</th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @rodada.jogos.each do |jogo| %>
+        <tr>
+          <td><%= jogo.time_home %></td>
+          <td><%= jogo.placar_home || "-" %></td>
+          <td><b>x</b></td>
+          <td><%= jogo.placar_away || "-" %></td>
+          <td><%= jogo.time_away %></td>
+          <% if admin? %>
+            <td>
+              <%= link_to '', [@bolao, @rodada, jogo], 
+                          method: :delete, 
+                          class: "btn icon-trash icon-white btn-danger" %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info">Nenhum jogo cadastrado para esta rodada.</div>
+<% end %>
+
+<% if admin? && !@rodada.rodada_trancada? %>
+  <h5>Adicionar Novo Jogo:</h5>
+  <%= render "/jogos/form" %>
+<% end %>
+
+
+
+<div class="form-actions">
+  <%= link_to t('.back', :default => t("helpers.links.back")),
+              bolao_rodadas_path(@bolao), :class => 'btn'  %>
+</div>

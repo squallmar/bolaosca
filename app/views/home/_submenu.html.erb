@@ -1,0 +1,7 @@
+<div class="navbar navbar-inner sub-navbar">
+  <ul class="nav">
+    <%= content_tag :li, (link_to 'HOME' , root_url, :class=>"icon-home") %>
+    <%= content_tag :li, link_to(' TABELA DO BRASILEIRÃO',tabela_path, :class=>"icon-table"), :class => action?('tabela') ? ' active' : '' %>
+    <%= content_tag :li, link_to(' NOTÍCIAS DO BRASILEIRÃO',noticiasge_path, :class=>"icon-bullhorn"), :class => action?('noticiasge') ? ' active' : '' %>
+  </ul>
+</div>

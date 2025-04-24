@@ -1,0 +1,8 @@
+<%= content_tag :h3, "Editar ÁLBUM", :class => "title"  %>
+
+<%= render 'form' %>
+<%= link_to ' Adicionar Fotos', new_album_foto_path(@album) , :class=> "btn btn-primary icon-camera-retro"%>
+<hr>
+<%= link_to 'Ver Detalhes', @album , :class=> "btn "%> |
+<%= link_to "Remover Álbum", @album, :confirm => 'Tem certeza?', :method => :delete, :class=> "btn btn-danger" %> |
+<%= link_to 'Voltar', albums_path, :class=> "btn " %>

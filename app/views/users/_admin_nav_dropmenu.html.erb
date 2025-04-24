@@ -1,0 +1,7 @@
+<li> <%= link_to 'Alterar Dados', edit_admin_registration_path(current_user)  %> </li>
+<%= content_tag :li do %>
+  <%= link_to('edit_setting_path 1') do %>
+    Configurações <%= content_tag :i, ' ', :class => "icon-cog" %>
+  <% end -%>
+<% end -%>
+<li> <%= link_to "Sair", destroy_admin_session_path, :method => :delete %></li>

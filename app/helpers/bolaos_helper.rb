@@ -1,0 +1,2 @@
+module BolaosHelper
+end

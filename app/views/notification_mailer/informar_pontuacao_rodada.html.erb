@@ -1,0 +1,12 @@
+<%= render :partial => "topo_mailer" %>
+<h1>Olá <%= @jogador.nome %>,  </h1>
+
+<b>
+
+  Você fez <%= @pontuacao.pontos %> pontos, na rodada <%= @rodada.numero %> no bolão <%= @bolao.titulo %>.<br>
+Para visualizar a classificação da rodada clique neste link <%= link_to "Ver classificação da rodada!",root_url + "boloes/#{@bolao.id}/rodadas/#{@rodada.id}/classificacao" %>
+<br>
+<br>
+<%= link_to "Ver classificação completa do bolão!",root_url + "boloes/#{@bolao.id}/classificacao" %>
+</b>
+<%= render :partial => "footer_mailer" %>

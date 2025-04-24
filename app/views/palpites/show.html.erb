@@ -1,0 +1,48 @@
+<%= content_tag :p, (@bolao == @bolao_atual ? 'Bolão Atual - ' : '') + @bolao.titulo, :class => "label label-success" %>
+<div class="page-header">
+  <h3>Aposta de <%= @palpites.first.user.apelido || @palpites.first.user.nome %></h1>
+  <p>RODADA <%= @rodada.numero %></p>
+</div>
+
+<h4> Palpites: </h4>
+
+<table class="table table-striped tabela_rodada">
+  <thead>
+    <tr>
+      <th>Time(CASA)</th>
+      <th>Aposta</th>
+      <th colspan=3>Placar da rodada</th>
+      <th>Aposta</th>
+      <th>Time(FORA)</th>
+      <th></th>
+    </tr>
+    <tr>
+      <th></th>
+      <th>(CASA)</th>
+      <th>(CASA)</th>
+      <th>Vs.</th>
+      <th>(FORA)</th>
+      <th>(FORA)</th>
+      <th>Time(FORA)</th>
+      <th>Pontuação</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @jogos.each_with_index do |jogo,i| -%>
+      <tr>
+        <% palpite = @palpites[i] %>
+        <td><%= jogo.time_home %></td>
+        <td><%= palpite.home %></td>
+        <td><%= jogo.placar_home %></td>
+        <td><b>x</b></td>
+        <td><%= jogo.placar_away %></td>
+        <td><%= palpite.away %></td>
+        <td><%= jogo.time_away %></td>
+        <td>+<%#= ponto_no_jogo(palpite,jogo) %></td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>
+<%= link_to ' Escolher Palpites', apostando_bolao_rodada_palpites_path(@bolao, @rodada), 
+          style: 'display:block', 
+          class: "btn icon-legal icon-2x icon-white btn-success" if @rodada.apostas_abertas? %>

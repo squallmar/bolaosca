@@ -1,0 +1,8 @@
+
+<div class="pull-right">
+  <%= content_tag :p, "Comparar", :onclick =>'$(".form-horizontal.comparacao").toggle("slide", {direction: "right"}, 400);', :class => 'btn clear btn-mini' %>
+<%= form_for "other_user", :url =>comparar_bolao_user_path(@bolao, @user),  :html => { :method=>:get, :class => 'form-horizontal comparacao', :style =>'display:none' } do |f| %>
+      <%= f.text_field :user, :placeholder=>'Apelido, Email ou Nome do usuário' %>
+      <%= f.submit ' GO!', :class => 'btn-mini btn btn-warning'  %>
+<% end %>
+</div>

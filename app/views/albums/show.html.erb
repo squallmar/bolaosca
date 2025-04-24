@@ -1,0 +1,135 @@
+<script type="text/Javascript">
+
+  $(function() {
+    $(".btn, input, .album-close").bind("click",function(event){
+      // alert($(this)[0].href);
+      $('#boxslide').modal('hide');
+      window.location = ($(this)[0].href);
+    });
+    $("input.btn").bind("click",function(event){
+      id = $(this).attr('id');
+      $('form#comentario_form.'+id).submit();
+    });
+    $(".comentarios .coment").bind("click",function(event){
+      $(this).toggleClass('active');
+    });
+    $(".comentarios .coment").dblclick(function(){
+      $(this).toggleClass('blocked');
+    });
+
+    $(".photo-box img").each(function() {
+      // $(this).css("height", this.height.toString() + "px !important");
+      // counter = (parseInt($(".photo-box").css('height')) - this.height)/2;
+      // if(counter > 0)
+      //   $(this).css("margin-top", counter.toString() + "px !important");
+      //   // this.style.marginTop = counter+"px !important";
+
+      $(this).load(function() {
+        this.setAttribute("style","height:" + this.height.toString() + "px !important");
+        // alert(this.height);
+        counter = (parseInt($(".photo-box").css('height')) - this.height)/2;
+        if(counter > 0)
+          this.setAttribute("style","margin-top:" + counter.toString() + "px !important");
+        // this.style.marginTop = counter+"px !important";
+      });
+    });
+
+  // LEVAR O USUÁRIO ATÉ O ÚLTIMO COMENTÁRIO
+
+   $(window).load(function(){
+       var aTag = $(".activePage .comentarios .coment").last();
+       $('.activePage div.comentarios').delay(300).animate({scrollTop: aTag.offset().top-100},1000);
+       // $(".activePage .comentarios .coment").last().
+       aTag.delay(2000).stop().css("background-color", "#FFFFFF").animate({ backgroundColor: "#666666"}, 2000);
+
+       // $(".comentarios .coment").last().fadeOut('slow').fadeIn('slow');
+       // $(".comentarios .coment").last.stop().css("background-color", "#FFF").animate({ backgroundColor: "#666"}, 1500);
+       // delay(400).animate({scrollTop: aTag.offset().top-100},300);
+    });
+
+  });
+
+
+
+  var slider = {
+  init: function() {
+      $('#slider').anythingSlider({});
+    }
+  }
+  $(window).load(slider.init);
+
+</script>
+
+<style>
+  .modal-backdrop, .modal-backdrop.fade.in {opacity: .98;z-index: 999999 !important;}
+</style>
+
+<div id="boxslide" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-toggle="modal">
+
+<% unless flash[:slideshow].nil? %>
+  <div class="attention alert">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <%= content_tag :p, flash[:slideshow] %>
+  </div>
+<% end -%>
+    <%= link_to '×', albums_path, :target=>"_blank", :class=>"pull-right album-close label label-danger"  %>
+  <div class="modal-body">
+    <div id="simple" >
+      <ul id="slider">
+        <% @album.fotos.each_with_index do |foto, i| %>
+          <li>
+            <div class="photo-box">
+              <%= image_tag foto.imagem_url %>
+            </div>
+            <div class="coment-box">
+              <% if admin? %>
+                <div class="tab-actions">
+                  <%= link_to "Editar", edit_album_foto_path(@album, foto), :class=>"btn btn-mini icon-edit" %> |
+                  <%= link_to "Apagar", [@album, foto], :confirm => 'Tem certeza que deseja apagar esta foto?', :method => :delete,:class=>"btn btn-mini icon-trash" %>|
+                  <%= link_to "Tornar capa", tornar_capa_album_path(@album, :foto => foto.id, :pos=> i+1), :method => :put, :class=>"btn btn-mini icon-check" %>
+                </div>
+              <% end -%>
+              <%= foto.descricao %>
+              <hr>
+              <div class="comentarios">
+                <% foto.comentarios.each do |comentario| %>
+                  <div class="coment">
+                    <div class="avatar">
+                      <%= image_tag(comentario.user.avatar? ? comentario.user.avatar.thumb.url : no_image_url) -%>
+                      <%= content_tag :p, comentario.user.apelido || comentario.user.email.split('@').first %>
+                    </div>
+                      <%= link_to "<i class='icon-trash badge badge-warning'></i>".html_safe,
+                                  # ([@album, comentario.foto, comentario,:pos=>i+1]),
+                                  # {:controller => "fotoscomentarios", :action=>"destroy", :pos=>i+1},
+                                  album_foto_comentario_path(@album, foto, comentario, :pos=>i+1),
+                                  :confirm => 'Tem certeza?',
+                                  :method => :delete,
+                                  :class=> "pull-right"  if comentario.user == current_user or admin? %>
+                    <p class="texto">
+                      <%= comentario.texto %>
+                    </p>
+                  </div>
+                <% end -%>
+              </div>
+                <p class="text">
+                  <%= image_tag (current_user.avatar? ? current_user.avatar.thumb.url : no_image_url), :class=>"avatar" -%>
+                  <%#= form_for album_foto_comentarios_path(@album, foto), :html=>{:id=>"comentario_form", :method => :post} do |f| %>
+                  <%= form_for [@album, foto, foto.comentarios.build], :html=>{:id=>"comentario_form",:class=>foto.id.to_s, :method => :post} do |f| %>
+                    <%= hidden_field_tag "pos" , i+1  %>
+                    <%= hidden_field_tag "foto_id" , foto.id  %>
+                    <%= f.text_area :texto, :placeholder=>"Entre com seu comentário aqui...", :class => 'text_area', :rows=>3 , :cols=> 33 %>
+                    <%= f.submit 'Enviar',:class=>'btn-mini btn btn-primary',:id=>foto.id.to_s %>
+                  <% end %>
+                </p>
+           </div>
+             <%= link_to "Ver todos álbuns", albums_path, :class=>"btn btn-mini pull-right", :style=> "margin-right:40px" %>
+            <% if admin? %>
+                <%= link_to "Adicionar Fotos", new_album_foto_path(@album),:class=>"btn btn-mini pull-right" %>
+                <%= link_to "Remover Álbum", @album, :confirm => 'Tem certeza?', :method => :delete, :class=> "btn btn-mini pull-right" %>
+            <% end -%>
+          </li>
+        <% end -%>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+<%- model_class = Bolao -%>
+<% if @bolaos.blank? %>  <!-- .blank? funciona com nil e array vazio -->
+  <div class="page-header">
+    <%= content_tag :h3, "Nenhum bolão foi criado!", class: "title" %>
+  </div>
+<% else %>
+  <div class="page-header">
+     <%= content_tag :h3, "Todos Bolões", :class => "title"  %>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th><%= model_class.human_attribute_name(:titulo) %></th>
+        <th><%= model_class.human_attribute_name(:data_inicio) %></th>
+        <th><%= model_class.human_attribute_name(:data_final) %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @bolaos.each do |bolao| %>
+        <tr>
+          <td><%= link_to bolao.titulo, bolao_path(bolao) %></td>
+          <td><%= l bolao.data_inicio %></td>
+          <td><%= l bolao.data_final %></td>
+          <td>
+            <% if admin? %>
+              <%= link_to t('.edit', :default => t("helpers.links.edit")),
+                          edit_bolao_path(bolao), :class => 'btn btn-mini' %>
+              <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+                          bolao_path(bolao),
+                          :method => :delete,
+                          :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+                          :class => 'btn btn-mini btn-danger' %>
+            <% end -%>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<%= link_to t('.new', :default => t("helpers.links.new")),
+            new_bolao_path,
+            :class => 'btn btn-primary' if admin? %>

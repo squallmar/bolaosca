@@ -1,0 +1,33 @@
+<%= form_for @post, :html => { :class => 'form-horizontal', :multipart => true } do |f| %>
+  
+  <div class="control-group">
+    <%= f.label :titulo, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :titulo, :class => 'text_field' %>
+      <%= error_tag @post, :titulo %>
+    </div>
+  </div>
+
+
+  <div class="control-group">
+    <%= f.label :imagem, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.file_field :imagem, :class => 'file_field' %>
+      <%= error_tag @post, :imagem %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <%= f.label :texto, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_area :texto , :class => 'text_area wysihtml5' %>
+      <%= error_tag @post, :texto %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit nil, :class => 'btn btn-primary' %>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                posts_path, :class => 'btn' %>
+  </div>
+<% end %>

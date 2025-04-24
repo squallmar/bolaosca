@@ -1,0 +1,16 @@
+<%= form_for(@album) do |f| %>
+
+  <div class="field">
+    <%= f.label :titulo %><br />
+    <%= f.text_field :titulo %>
+    <%= error_tag @album, :titulo %>
+  </div>
+  <div class="field">
+    <%= f.label :descricao %><br />
+    <%= f.text_field :descricao %>
+    <%= error_tag @album, :descricao %>
+  </div>
+  <div class="actions">
+    <%= f.submit  nil, :class =>'btn btn-primary' %>
+  </div>
+<% end %>

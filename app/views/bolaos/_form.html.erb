@@ -1,0 +1,49 @@
+<%= form_for @bolao, :html => { :class => 'form-horizontal' } do |f| %>
+  <div class="control-group">
+    <%= f.label :titulo, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :titulo, :class => 'text_field' %>
+      <%= error_tag @bolao, :titulo %>
+    </div>
+  </div>
+
+<div class="control-group">
+    <% if @bolao.image.present? -%>
+      <%= image_tag(@bolao.image.url, :class=>'user_photo')%>
+      <p>
+        <label>
+          <%= f.check_box :remove_image %>
+          Remover Imagem
+        </label>
+      </p>
+    <% end -%>
+    <br/><br/>
+    <%= f.label :image, :class => 'control-label' %>
+    <div class="controls">
+    <%= f.file_field :image, :style =>'width:300px' %>
+    <%= error_tag @bolao, :image %>
+    </div>
+  </div>
+
+
+  <div class="control-group">
+    <%= f.label :data_inicio, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.datetime_select :data_inicio, :class => 'datetime_select' %>
+      <%= error_tag @bolao, :data_inicio %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :data_final, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.datetime_select :data_final, :class => 'datetime_select' %>
+      <%= error_tag @bolao, :data_final %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit nil, :class => 'btn btn-primary' %>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                bolaos_path, :class => 'btn' %>
+  </div>
+<% end %>

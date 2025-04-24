@@ -1,0 +1,42 @@
+<h3 class="title">Editar Preferências</h3>
+
+<%= form_for @opcao, :url=> preferencias_path, :html=>{:method=>:put} do |f| %>
+
+
+  <h5 class="title">Privacidade</h3>
+  <div class="field">
+    <%= f.check_box :mostrar_email %>
+    <%= f.label :mostrar_email %>
+  </div>
+
+  <h5 class="title">Notificações</h3>
+  <div class="field">
+    <%= f.check_box :notificacao_pontuacao %>
+    <%= f.label :notificacao_pontuacao %>
+  </div>
+  <div class="field">
+    <%= f.check_box :notificacao_prazos %>
+    <%= f.label :notificacao_prazos %>
+  </div>
+  <!-- <div class="field"> -->
+    <%#= f.check_box :notificacao_novos_boloes %>
+    <%#= f.label :notificacao_novos_boloes %>
+  <!-- </div> -->
+  <% if admin? %>
+    <div class="field">
+      <%= f.check_box :notificacao_contato_geral %>
+      <%= f.label :notificacao_contato_geral %>
+    </div>
+    <div class="field">
+      <%= f.check_box :notificacao_solicitar_cadastro %>
+      <%= f.label :notificacao_solicitar_cadastro %>
+    </div>
+  *Apenas para administradores
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit "Salvar Preferências", :class=>"btn btn-primary" %>
+  </div>
+<% end %>
+
+<%= link_to 'Voltar', :back, :class => "btn" %>

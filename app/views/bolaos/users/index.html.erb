@@ -1,0 +1,42 @@
+<%- model_class = User.new.class -%>
+<div class="page-header">
+  <%= content_tag :h3, "PARTICIPANTES DO BOLÃO", :class => "title"  %>
+
+  <%= content_tag :h1, @bolao.titulo,  :class => "title"  %>
+</div>
+<%= form_tag bolao_users_path(@bolao) ,:method => 'get', :id => 'form', :class=>'quick-search' do %>
+    <p id="search-box">
+      <i class="icon-search"></i><%= text_field_tag :q, @search_query,:id => 'search' , :placeholder => 'Procurar usuário por nome, email ou apelido ...' %>
+      <%= submit_tag "OK!", :nome => nil, :style => "min-width: 20px !important;width: 40px !important;padding: 0px !important;" %>
+    </p>
+  <% end -%>
+<%= link_to 'CONVIDAR USUÁRIOS', new_user_invitation_path(id:@bolao) ,:class=>'btn btn-primary pull-right' %>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th><%= model_class.human_attribute_name(:nome) %></th>
+      <th><%= model_class.human_attribute_name(:email) %></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= link_to (user.apelido or user.nome), [@bolao,user]  %></td>
+        <td><%= mail_to user.email, user.email,:subject => "BOLAO - SCA",:target => "_blank" %></td>
+        <td>
+          <%= link_to 'Ver Detalhes',[@bolao,user], :class => 'btn btn-mini' %>
+          <%= link_to t('.edit', :default => t("helpers.links.edit")),
+                      edit_user_path(user),
+                      :class => 'btn btn-mini btn-primary' %>
+
+          <%= link_to 'Remover do bolão',
+                      bolao_user_path(@bolao, user),
+                      :method => :delete,
+                      :confirm => t('.confirm', :default => t("helpers.links.confirm")),
+                      :class => 'btn btn-mini btn-danger' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

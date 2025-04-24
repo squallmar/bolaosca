@@ -1,0 +1,41 @@
+<%- model_class = Rodada -%>
+<div class="page-header">
+  <%= content_tag :h3, "Rodadas", :class => "title"  %>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th><%= model_class.human_attribute_name(:numero) %></th>
+      <th><%= model_class.human_attribute_name(:data_inicio_apostas) %></th>
+      <th><%= model_class.human_attribute_name(:data_final_apostas) %></th>
+      <th>Situação:</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @rodadas.each do |rodada| %>
+      <tr>
+        <td><%= link_to rodada.numero, bolao_rodada_path(@bolao,rodada) %></td>
+        <b><td><%= rodada.data_inicio_apostas.strftime("%d/%m/%y  %H:%M:%S") %></td>
+        <td><%= rodada.data_final_apostas.strftime("%d/%m/%y  %H:%M:%S") %></td></b>
+        <td><%= content_tag :p, situacao(rodada), :class => "label label-info"  %></td></b>
+        <td>
+        <%= link_to "Ver Detalhes", bolao_rodada_path(@bolao,rodada),:class => 'btn btn-mini' %>
+        <% if admin? -%>
+          <%= link_to t('.edit', :default => t("helpers.links.edit")),
+                      edit_bolao_rodada_path(@bolao,rodada), :class => 'btn btn-mini' %>
+          <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+                      bolao_rodada_path(@bolao,rodada),
+                      :method => :delete,
+                      :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+                      :class => 'btn btn-mini btn-danger' %>
+        <% end -%>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to t('.new', :default => t("helpers.links.new")),
+            new_bolao_rodada_path(@bolao),
+            :class => 'btn btn-primary' if admin? %>

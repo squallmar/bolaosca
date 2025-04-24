@@ -1,0 +1,5 @@
+  <%= content_tag :h3, "Editar foto", :class => "title"  %>
+  <%= image_tag @foto.imagem.url  %>
+<%= render 'form' %>
+
+<%= link_to 'Voltar', @album, :class=> "btn" %>

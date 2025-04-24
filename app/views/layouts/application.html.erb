@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BOLÃO SCA</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+  <div class="container mx-auto px-4 py-6 max-w-7xl">
+    <%= render 'layouts/topo' %>
+
+    <% @bolao_atual = bolao_atual %>
+    <% @rodada_atual = rodada_atual(@bolao_atual.id) if @bolao_atual.present? %>
+    <% @ultima_rodada_aberta = ultima_rodada_aberta %>
+
+    <div class="flex flex-col md:flex-row gap-6">
+      <!-- Conteúdo Principal -->
+      <main class="w-full md:w-3/4">
+        <%= render 'layouts/notice' %>
+        <%= render 'home/submenu' if controller_name == 'home' %>
+        <%= yield %>
+      </main>
+
+      <!-- Sidebar -->
+      <aside class="w-full md:w-1/4 space-y-4">
+        <% if !@ultima_rodada_aberta.present? && @bolao_atual.present? && !@bolao_atual.rodadas.futuras.empty? %>
+          <%= render 'rodadas/tempo_abertura_nova_rodada' %>
+        <% end %>
+
+        <% if @ultima_rodada_aberta.present? %>
+          <%= render 'rodadas/tempo_restante_fechamento' %>
+        <% end %>
+
+        <%= render 'layouts/publicidade' %>
+      </aside>
+    </div>
+
+    <%= render 'layouts/footer' %>
+    <%= render 'layouts/manut' if Bolaosca::Application::MANUT_AT %>
+  </div>
+
+</body>
+</html>

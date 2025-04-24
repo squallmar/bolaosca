@@ -1,0 +1,36 @@
+<div class="post">
+  <%= content_tag :h3, @post.titulo, :class => "title"  %>
+  <% if admin? -%>
+    <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+                    post_path(@post),
+                    :method => :delete,
+                    :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+                    :class => 'btn btn-mini btn-danger icon-trash pull-right' %>
+    <%= link_to t('.edit', :default => t("helpers.links.edit")),
+                    edit_post_path(@post), :class => "btn btn-mini icon-edit pull-right" %>
+  <% end %>
+
+  <p><%= l @post.created_at %></p>
+  <p>
+    <%= image_tag(@post.imagem_url) if @post.imagem_url.present? %>
+    <%= @post.texto.html_safe %>
+  </p>
+</div>
+<hr>
+  <h2>Comentários</h2>
+      <% @post.comentarios.each do |comentario| %>
+     <div class="comments">
+           <%= link_to  "", [comentario.post, comentario], :confirm => 'Tem certeza?', :class => 'btn btn-mini btn-danger icon-trash pull-right', :method => :delete if comentario.user == current_user or admin? %>
+        <div class="avatar">
+           <%= image_tag(comentario.user.avatar? ? comentario.user.avatar.thumb.url : no_image_url) -%>
+           <span><%= comentario.user.apelido || comentario.user.email.split('@').first %></span>
+        </div>
+        <div class= "content">
+          <%= comentario.texto %>
+        </div>
+        <span class="pull-right"><%= time_ago_in_words(comentario.created_at) %> </span>
+    </div>
+    <% end %>
+
+<%= render "/comentarios/form" %>
+<br />

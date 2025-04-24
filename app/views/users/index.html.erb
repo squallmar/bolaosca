@@ -1,0 +1,130 @@
+<%- model_class = User.new.class -%>
+
+<!-- Barra de navegação secundária -->
+<div class="bg-gray-100 px-4 py-2 mb-6 rounded-md shadow-sm">
+  <ul class="flex space-x-4">
+    <li>
+      <%= link_to users_path, 
+            class: "px-3 py-1 rounded-md text-sm font-medium #{'bg-white shadow text-blue-600' unless params[:incompletos].present?}",
+            data: { intro: "Mostra todos os usuários cadastrados no sistema" } do %>
+        Listar Usuários
+      <% end %>
+    </li>
+    
+    <li>
+      <%= link_to users_path(incompletos: true), 
+            class: "px-3 py-1 rounded-md text-sm font-medium #{'bg-white shadow text-blue-600' if params[:incompletos].present?}",
+            data: { intro: "Mostra todos os usuários que ainda não aceitaram o convite" } do %>
+        Convites Abertos
+      <% end %>
+    </li>
+    
+    <li>
+      <%= link_to new_user_invitation_path, 
+            class: "px-3 py-1 rounded-md text-sm font-medium hover:bg-gray-200",
+            data: { intro: "Permite convidar usuários apenas para o sistema, para convidar o usuário para um bolão e também para o sistema, vá até o menu do bolão e clique em Adicionar participantes" } do %>
+        Convidar para o Sistema
+      <% end %>
+    </li>
+  </ul>
+</div>
+<!----------------------------------------------------------------------------->
+<div class="bg-[#10b981] p-4 text-white rounded-lg shadow-lg mb-4">
+  Teste 1 - Verde via Tailwind JIT
+</div>
+
+<div class="bg-emerald-500 p-4 text-white rounded-lg shadow-lg">
+  Teste 2 - Verde via classe Tailwind
+</div>
+
+<style>
+  .teste-manual {
+    background-color: #10b981;
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+</style>
+<div class="teste-manual">
+  Teste 3 - Verde via CSS tradicional
+</div>
+<!----------------------------------------------------------------------->
+<!-- Cabeçalho e busca -->
+<div class="flex justify-between items-center mb-6">
+  <h3 class="text-2xl font-bold text-gray-800">Usuários</h3>
+  
+  <%= form_tag users_path, method: :get, class: "relative" do %>
+    <div class="flex">
+      <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+        <%= text_field_tag :q, @search_query, 
+              class: "block pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+              placeholder: "Procurar usuário por nome, email ou apelido..." %>
+      </div>
+      <%= submit_tag "Buscar", 
+            class: "ml-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+    </div>
+  <% end %>
+</div>
+
+<!-- Tabela de usuários -->
+<div class="overflow-x-auto shadow rounded-lg">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <%= model_class.human_attribute_name(:nome) %>
+        </th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <%= model_class.human_attribute_name(:email) %>
+        </th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+          Ações
+        </th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      <% @users.each do |user| %>
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <%= link_to user.apelido || user.nome, user, class: "text-blue-600 hover:text-blue-800" %>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <%= mail_to user.email, user.email, 
+                  subject: "BOLAO - SCA", 
+                  class: "text-blue-600 hover:text-blue-800" %>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap space-x-2">
+            <%= link_to 'Detalhes', user, class: "inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
+            
+            <%= link_to 'Editar', edit_user_path(user), class: "inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-700" %>
+
+            <% if bolao_atual&.users&.include?(user) && !params[:incompletos].present? %>
+              <%= link_to 'Remover do Bolão', 
+                    bolao_user_path(bolao_atual, user),
+                    method: :delete,
+                    data: { confirm: "Tem certeza que deseja remover este usuário do bolão?" },
+                    class: "inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-red-600 hover:bg-red-700" %>
+            <% elsif bolao_atual %>
+              <%= link_to 'Adicionar ao Bolão', 
+                    inscrever_bolao_user_path(bolao_atual, user),
+                    method: :put,
+                    class: "inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-green-600 hover:bg-green-700" %>
+            <% end %>
+
+            <% if user.admin? %>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                Superadmin
+              </span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

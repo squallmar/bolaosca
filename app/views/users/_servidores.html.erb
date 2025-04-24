@@ -1,0 +1,9 @@
+<%= content_tag(:h5, 'RESULTADO DA BUSCA POR ' + @search_query, :style=>'clear:both') if @search_query.present? -%><br/>
+
+<% @users.each do |user| -%>
+    <%= content_tag :li, :class=>'servidor drag' do %> 
+      <%= user.avatar? ? image_tag(user.avatar.thumb.url) : content_tag(:div,'', class: 'no_photo icon-user') %>
+      <%= content_tag :p, user.nome %> 
+    <% end -%>
+<% end -%>
+

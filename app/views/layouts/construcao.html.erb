@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BOLÃO SCA - EM CONSTRUÇÃO</title>
+   <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+  <![endif]-->
+  
+  <%= javascript_importmap_tags %>
+  <%= csrf_meta_tags %>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+</head>
+<body>
+  <%= image_tag("grass_stripe.jpg", :class => "bg") -%>
+  <div id="container">
+
+    <div class="clearfix wrapper">
+      <div class="row-fluid">
+        <div class="">
+          <br/>
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+

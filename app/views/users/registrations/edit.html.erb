@@ -1,0 +1,44 @@
+<%= content_tag :h3, "Editar Dados Pessoais", :class => "title"  %>
+
+<%= link_to 'Alterar Avatar', users_alterar_avatar_path  %>
+<hr>
+
+<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
+
+  <div>
+    <%= f.label :apelido %><br />
+    <%= f.text_field :apelido %>
+    <%= error_tag resource, :apelido %>
+  </div>
+
+  <div>
+    <%= f.label :nome %><br />
+    <%= f.text_field :nome, :class=>'grande' %>
+    <%= error_tag resource, :nome %>
+  </div>
+
+  <div>
+    <%= f.label :email %><br />
+    <%= f.email_field :email, :class=>'grande' %>
+    <%= error_tag resource, :email %>
+  </div>
+
+  <div>
+    <%= f.label :telefone %><br />
+    <%= f.text_field :telefone %>
+    <%= error_tag resource, :telefone %>
+  </div>
+
+  <div>
+    <%= f.label :setor %><br />
+    <%= f.text_field :setor %>
+    <%= error_tag resource, :setor %>
+  </div>
+
+
+<%= f.submit "Atualizar" , :class => 'btn btn-primary' %>
+<% end %>
+<hr>
+<%= link_to "Voltar", :back,:class => 'btn' %> |
+<%= (link_to "Cancelar e apagar conta", registration_path(resource_name), :class => 'btn btn-danger', :data => { :confirm => "Tem certeza?" }, :method => :delete) unless current_user.admin? %>
+

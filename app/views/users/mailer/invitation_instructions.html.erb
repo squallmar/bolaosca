@@ -1,0 +1,12 @@
+<%= render :partial => "/notification_mailer/topo_mailer" %>
+<p>Olá <%= @resource.email %>!</p>
+
+<p>Estamos te convidando para participar do nosso site: <%= root_url %>, Para se cadastrar, você tem que aceitar esse convite - clicando no link abaixo.</p>
+
+<p><%= link_to 'Aceitar Convite', accept_invitation_url(@resource, :invitation_token => @resource.invitation_token) %></p>
+
+<p>Caso não queira aceitar esse convite, por favor ignore este e-mail,<br />
+Sua conta no nosso sistema não será criada até que você acesse esse link de confirmação e preencha seus dados!</p>
+<%= render :partial => "/notification_mailer/footer_mailer" %>
+
+

@@ -1,0 +1,14 @@
+<%= content_tag :h3, "ÁLBUNS", :class => "title"  %>
+<% for album in @albums %>
+  <div class="album">
+    <%= link_to album.fotos.empty? ? edit_album_path(album) : album  do %>
+      <p class="title" ><%=raw truncate album.titulo, :length => 35, :omission => ( "...")  %>  </p>
+      <div class="capa">
+        <%= image_tag album.capa.imagem.thumb unless album.fotos.empty? %>
+      </div>
+    <% end %>
+    Fotos: <%= album.fotos.size %>
+  </div>
+<% end %>
+
+<p style="clear:both"><%= link_to "Criar Novo Álbum", new_album_path, :class => "btn" if admin? %></p>

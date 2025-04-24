@@ -1,0 +1,21 @@
+<table class="table table-striped mini classificacao"
+  <thead>
+    <th>
+      <td colspan=3><%= link_to content_tag(:h5, "Classificação",:class=> "title") , classificacao_bolao_rodada_path(@bolao, @rodada) %></td>
+    </th>
+    <tr>
+      <th>Pos</th>
+      <th>Apelido(nome)</th>
+      <th>Pontos</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @classificacao.each_with_index do |pos,i| %>
+      <tr>
+        <td><%= (i+1).to_s+'º' %></td>
+        <td><%= link_to (pos.user.apelido || pos.user.nome), bolao_rodada_palpites_path(@bolao, @rodada, :user_id=>pos.user.id) %></td>
+        <td><%= pos.pontos %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

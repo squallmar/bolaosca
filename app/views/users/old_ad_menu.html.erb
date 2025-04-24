@@ -1,0 +1,24 @@
+
+<li>
+  <a href='#'>USUÁRIOS</a>
+  <ul>
+    <%= content_tag(:li, (link_to 'TODOS USUÁRIOS' , users_path)) %>
+    <%= content_tag(:li, (link_to 'CONVITES ABERTOS' , users_path(:incompletos=>true))) %>
+    <%= content_tag(:li, (link_to 'CONVIDAR PARA O SISTEMA' , new_user_invitation_path)) %>
+  </ul>
+</li>
+
+<li>
+  <%= link_to 'POSTAGENS' , posts_path %>
+  <ul>
+    <%= content_tag(:li, (link_to 'LISTAR TODAS' , posts_path)) %>
+    <%= content_tag(:li, (link_to 'NOVA' ,new_post_path)) %>
+  </ul>
+</li>
+<li>
+  <%= link_to 'BANNERS' , banners_path %>
+  <ul>
+    <%= content_tag(:li, (link_to 'LISTAR TODOS' , banners_path)) %>
+    <%= content_tag(:li, (link_to 'NOVO' ,new_banner_path)) %>
+  </ul>
+</li>

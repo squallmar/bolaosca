@@ -1,0 +1,93 @@
+<% if @post.present? %>
+  <div class="post">
+    <span class="pull-right"><%= l @post.created_at %></span>
+    <div class="ribbon">
+      <h3 class="title">Fique ligado!</h3>
+    </div>
+    <div style="float: left;">
+      <h4><%= @post.titulo %></h4>
+      <p>
+        <%= image_tag(@post.imagem_url) if @post.imagem_url.present? %>
+        <%= raw truncate(@post.texto, length: 300) %>
+        <%= link_to " Ver mais", @post, class: "icon-info-sign" %>
+      </p>
+    </div>
+    <%= link_to " Ver postagens antigas", posts_path, class: "pull-right btn btn-primary" %>
+  </div>
+<% end %>
+
+<!-- Verificação segura da situação da rodada -->
+<% if @bolao.present? %>
+  <div class="post">
+    <div class="ribbon">
+      <h3 class="title"><%= @bolao.titulo %></h3>
+    </div>
+    
+    <% if @classificacao.present? %>
+      <div id="classificacao" class="span4">
+        <h4 class="title">Classificação</h4>
+        <table class="table table-striped mini">
+          <thead>
+            <tr>
+              <th>Pos</th>
+              <th>Apelido</th>
+              <th>Pontos</th>
+              <th>Máx</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @classificacao.each_with_index do |pos, i| %>
+              <tr>
+                <td><%= "#{i+1}º" %></td>
+                <td>
+                  <%= link_to (pos["apelido"] || pos["nome"]).truncate(14, omission: "..."), 
+                      bolao_user_path(@bolao, pos["id"]) %>
+                </td>
+                <td><%= pos["soma"] %></td>
+                <td><%= pos["maximo"] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <%= link_to "Ver Classificação Geral", classificacao_bolao_path(@bolao), 
+            class: "btn btn-mini btn-primary pull-right" %>
+      </div>
+    <% end %>
+
+    <% if @bolao.rodadas.any? %>
+      <div class="span7">
+        <h4 class="title">Rodadas</h4>
+        <table class="table table-striped mini rodada">
+          <thead>
+            <tr>
+              <th>Rodada</th>
+              <th>Ínicio das Apostas</th>
+              <th>Fim das Apostas</th>
+              <th>Situação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @bolao.rodadas.limit(5).each do |rodada| %>
+              <tr>
+                <td><%= link_to rodada.numero, bolao_rodada_path(@bolao, rodada) %></td>
+                <td>
+                  <%= link_to l(rodada.data_inicio_apostas, format: :short), 
+                      bolao_rodada_path(@bolao, rodada) %>
+                </td>
+                <td>
+                  <%= link_to l(rodada.data_final_apostas, format: :short), 
+                      bolao_rodada_path(@bolao, rodada) %>
+                </td>
+                <td>
+                  <p><%= current_user ? situacao(rodada) : rodada.situacao_nao_admin %></p>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <%= link_to "Ver Rodadas", bolao_rodadas_path(@bolao),
+            class: "btn btn-mini btn-primary pull-right" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

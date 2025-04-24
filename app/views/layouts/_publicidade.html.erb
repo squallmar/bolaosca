@@ -1,0 +1,57 @@
+<div id="banners">
+  <% @banners_patrocinadores=banners_patrocinadores %>
+  <% @banners_apoiadores=banners_apoiadores %>
+  <%= link_to(" Gerenciar Publicidade", new_banner_path, :class=>'icon-edit') if admin? -%>
+  <% unless @banners_patrocinadores.empty? %>
+    <h4><strong>Patrocinadores</strong></h4>
+    <div id="patrocinio1" class="carousel slide">
+      <div class="carousel-inner">
+        <div class="active item">
+          <%= link_to image_tag(@banners_patrocinadores[0].image) , link_banner_path(@banners_patrocinadores[0]) %>
+        </div>
+        <% if @banners_patrocinadores.size > 1 %>
+          <div class="item">
+              <%= link_to image_tag(@banners_patrocinadores[1].image) , link_banner_path(@banners_patrocinadores[1]) %>
+          </div>
+        <% end -%>
+      </div>
+    </div>
+    <% if @banners_patrocinadores.size > 2 %>
+      <div id="patrocinio2" class="carousel slide">
+        <div class="carousel-inner">
+          <div class="active item">
+            <%= link_to image_tag(@banners_patrocinadores[2].image) , link_banner_path(@banners_patrocinadores[2]) %>
+          </div>
+          <% if @banners_patrocinadores.size > 3 %>
+            <div class="item">
+                <%= link_to image_tag(@banners_patrocinadores[3].image) , link_banner_path(@banners_patrocinadores[3]) %>
+            </div>
+          <% end -%>
+        </div>
+      </div>
+    <% end -%>
+    <% if @banners_patrocinadores.size > 4 %>
+      <div id="patrocinio2" class="carousel slide">
+        <div class="carousel-inner">
+          <div class="active item">
+            <%= link_to image_tag(@banners_patrocinadores[4].image) , link_banner_path(@banners_patrocinadores[4]) %>
+          </div>
+          <% if @banners_patrocinadores.size > 5 %>
+            <div class="item">
+                <%= link_to image_tag(@banners_patrocinadores[5].image) , link_banner_path(@banners_patrocinadores[5]) %>
+            </div>
+          <% end -%>
+        </div>
+      </div>
+    <% end -%>
+  <% end -%>
+
+  <% unless @banners_apoiadores.empty? %>
+    <h4><strong>Apoio</strong></h4>
+    <% @banners_apoiadores.each do |banner| %>
+      <div>
+        <%= link_to image_tag(banner.image) , link_banner_path(banner) %>
+      </div>
+    <% end -%>
+  <% end -%>
+</div>

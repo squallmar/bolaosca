@@ -1,0 +1,30 @@
+<%= form_for [@bolao, @rodada], :html => { :class => 'form-horizontal' } do |f| %>
+  <div class="control-group">
+    <%= f.label :numero, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :numero, :class => 'text_field' %>
+      <%= error_tag @rodada, :numero %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :data_inicio_apostas, :class => 'control-label' %>
+    <div class="controls data">
+      <%# binding.pry %>
+      <%= f.datetime_select :data_inicio_apostas, :default=> @rodada.new_record? ? comeco_rodada_apostas_default : nil ,:class => 'datetime_select' %>
+          <%= error_tag @rodada, :data_inicio_apostas %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :data_final_apostas, :class => 'control-label' %>
+    <div class="controls data">
+      <%= f.datetime_select :data_final_apostas, :default=> @rodada.new_record? ? termino_rodada_apostas_default : nil, :class => 'datetime_select' %>
+      <%= error_tag @rodada, :data_final_apostas %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit nil, :class => 'btn btn-primary' %>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                bolao_rodadas_path(@bolao), :class => 'btn' %>
+  </div>
+<% end %>

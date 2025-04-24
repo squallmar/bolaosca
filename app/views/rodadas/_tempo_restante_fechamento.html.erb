@@ -1,0 +1,32 @@
+<% if @current_round.present? && @current_round.betting_end_time.present? %>
+  <script>
+    $(function() {
+      var endDate = new Date("<%= @current_round.betting_end_time.iso8601 %>");
+      
+      $('#bettingCountdown').countdown({
+        until: endDate,
+        onExpiry: function() {
+          alert('Tempo para apostas encerrado! Boa sorte!');
+          $('.countdown-container').fadeOut();
+          window.location.reload();
+        }
+      });
+    });
+  </script>
+
+  <div class="countdown-container">
+    <h4><i class="icon-time"></i> Apostas Abertas</h4>
+    <p>Encerramento em:</p>
+    <div id="bettingCountdown"></div>
+
+    <%= link_to new_bolao_rodada_palpites_path(@bolao, @current_round),
+                class: "btn btn-primary btn-lg" do %>
+      <i class="icon-edit"></i> Fazer Apostas
+    <% end %>
+  </div>
+<% else %>
+  <div class="countdown-container">
+    <h4><i class="icon-time"></i> Nenhuma rodada aberta no momento</h4>
+    <p>Fique ligado para a próxima!</p>
+  </div>
+<% end %>

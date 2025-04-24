@@ -1,0 +1,78 @@
+<%= content_tag :p, (@bolao == @bolao_atual ? 'Bolão Atual - ' : '') + @bolao.titulo, :class => "label label-success" %>
+<!-- <div class="page-header"> -->
+<div>
+  <h3>Aposta de <%= @palpites.first.user.apelido || @palpites.first.user.nome %></h1>
+  <p>RODADA <%= @rodada.numero %></p>
+</div>
+<div id="legenda" >
+  <dl id="checks",  data-intro="A caixinha com um visto mostra em qual time você apostou que irá vencer, a caixinha vazia, mostra em qual time você apostou que irá perder e a caixinha preenchida mostra que você apostou no empate. ">
+    <dt><i class="icon-check"></i></dt><dd>Vitória</dd>
+    <dt><i class="icon-check-empty"></i></dt><dd>Derrota</dd>
+    <dt><i class="icon-sign-blank"></i></dt><dd>Empate</dd>
+  </dl>
+  <% unless @jogos.first.placar_home.nil? %>
+    <dl id="colors", data-intro="O palpite na cor vermelha mostra o campo correto do resultado  da rodada no qual você errou, e na cor verde mostra o campo correto que você acertou. ">
+      <dt><i style="background:#FF8B8B"></i></dt><dd> Gabarito</dd>
+      <dt><i style="background:#5ED85E"></i></dt><dd> Palpite Acertado!</dd>
+    </dl>
+  <% end -%>
+</div>
+
+<h4> Palpites: </h4>
+
+<table class="table table-striped tabela_rodada">
+  <thead>
+    <tr>
+      <th colspan=3>COLUNA I</th>
+      <th>Vs.</th>
+      <th colspan=3>COLUNA II</th>
+      <th>Pontuação</th>
+    </tr>
+    <tr class="mainth">
+      <th>Time Mandante</th>
+      <th>PALPITES</th>
+      <th colspan=3>Placar da rodada</th>
+      <th>PALPITES</th>
+      <th>Time Visitante</th>
+      <th>PTS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if @rodada.apostas_encerradas? and !(@jogos.map(&:placar_away).include?(nil) or @jogos.map(&:placar_away).include?(nil)) %>
+      <% @jogos.each_with_index do |jogo,i| -%>
+        <% palpite = @palpites[i] %>
+        <% dados_do_jogo = get_data(palpite.home,palpite.away,jogo.placar_home,jogo.placar_away) %>
+        <tr class="color-<%=dados_do_jogo[:cor_aux]%>">
+          <td style="background-color: <%#=dados_do_jogo[:cor_1]%>"><%= jogo.time_home %></td>
+          <td style="background-color: <%=dados_do_jogo[:cor_1]%>"><%= content_tag :i,'' , :class => dados_do_jogo[:icone_home] %></td>
+          <td><%= jogo.placar_home %></td>
+          <td style="background-color: <%=dados_do_jogo[:cor_3]%>"><b>x</b></td>
+          <td><%= jogo.placar_away %></td>
+          <td style="background-color: <%=dados_do_jogo[:cor_2]%>"><%= content_tag :i,'', :class => dados_do_jogo[:icone_away] %></td>
+          <td style="background-color: <%#=dados_do_jogo[:cor_2]%>"><%= jogo.time_away %></td>
+          <td><p class="label badge <%= dados_do_jogo[:ponto] == 0 ? 'label-warning' : 'label-success' %>">+<%= dados_do_jogo[:ponto] %></p></td>
+        </tr>
+      <% end -%>
+    <% else -%>
+      <% @jogos.each_with_index do |jogo,i| -%>
+        <tr>
+          <% palpite = @palpites[i] %>
+          <% dados_do_jogo = get_data_sem_resultado(palpite.home,palpite.away) %>
+          <td><%= jogo.time_home %></td>
+          <td><%= content_tag :i,'' , :class => dados_do_jogo[:icone_home] %></td>
+          <td><%= "SEM PLACAR" %></td>
+          <td><b>x</b></td>
+          <td><%= "SEM PLACAR" %></td>
+          <td><%= content_tag :i,'', :class => dados_do_jogo[:icone_away] %> </td>
+          <td><%= jogo.time_away %></td>
+          <td><p class="label badge label-info">?</p></td>
+        </tr>
+      <% end -%>
+    <% end -%>
+    <tr>
+      <td colspan=7></td>
+      <td><div class="label badge label-success icon-2x"><%= @pontuacao %></div></td>
+    </tr>
+  </tbody>
+</table>
+<%= link_to ' Editar Palpites', edit_bolao_rodada_palpites_path(@bolao, @rodada), :style => 'display:block', :class=> "btn icon-edit icon-2x icon-white btn-primary" if @rodada.apostas_abertas?  %>

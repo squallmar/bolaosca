@@ -1,0 +1,92 @@
+#encoding: utf-8
+pt-BR:
+  activerecord:
+    models:
+      opcao: "Preferências"
+      user:
+        one: "Usuário"
+        zero: "Nenhum usuário"
+        other: "Usuários"
+      album:
+        one: "Álbum"
+        zero: "Nenhum álbum"
+        other: "Álbuns"
+      banner: "Banner"
+      bolao:
+        one: "Bolão"
+        zero: "Nenhum bolão"
+        other: "Bolões"
+      comentario: "Comentário"
+      pontuacao:
+        one: "Pontuação"
+        zero: "Nenhuma pontuação"
+        other: "Pontuações"
+      post: "Postagem"
+    attributes:
+      opcao:
+        mostrar_email: "Tornar meu e-mail visível aos outros usuários"
+        notificacao_pontuacao: "Notificar-me sobre minhas pontuações"
+        notificacao_prazos: "Notificar-me sobre prazos de apostas"
+        notificacao_novos_boloes: "Notificar-me sobre a existência de novos bolões"
+        notificacao_contato_geral: "Receber contatos feitos através do site*"
+        notificacao_solicitar_cadastro: "Receber solicitações de cadastro feitas através do site*"
+      album:
+        titulo: "Título"
+        decricao: "Descrição"
+        capa: "Capa"
+        fotos: "Fotos"
+      foto:
+        descricao: "Descrição"
+        imagem: "Imagem"
+      palpite:
+        home: "Casa"
+        away: "Fora de casa"
+        primeiro_marcador: "Primeiro marcador"
+      post:
+        titulo: "Título"
+      rodada:
+        data_final_apostas: "Data final das apostas"
+        data_inicio_apostas: "Data de início das apostas"
+        numero: "Número"
+      banner:
+        image: "Imagens"
+        text: "Texto"
+        count_views: "Contador de cliques"
+        remove_image: "Remover imagem"
+      bolao:
+        data_final: "Data final"
+        data_inicio: "Data inicial"
+        titulo: "Título"
+        image: "Imagem"
+        remove_image: "Remover imagem"
+      jogo:
+        placar_home: "Gols (casa)"
+        placar_away: "Gols (fora)"
+        time_home: "Mandante"
+        time_away: "Visitante"
+      user:
+        email: "E-mail"
+        password: "Senha"
+        password_confirmation: "Confirmar Senha"
+        current_password: "Senha Atual"
+        remember_me: "Lembre-se de mim"
+        siape: "Siape"
+        funcao: "Função"
+  helpers:
+    links:
+      destroy: "Apagar"
+      edit: "Editar"
+      new: "Novo"
+      back: "Voltar"
+      cancel: "Cancelar"
+      confirm: "Tem certeza que deseja continuar?"
+    titles:
+      edit: "Editar"
+      new: "Novo"
+  views:
+    pagination:
+      next: "Pŕoxima"
+      previous: "Anterior"
+      first: "Primeira"
+      last: "Última"
+      truncate: "..."

@@ -1,0 +1,17 @@
+<%= form_for [@album, @foto],  :html => { :multipart => true } do |f| %>
+
+    <div class="field">
+    <%= f.label :imagem %><br />
+    <%= f.file_field :imagem %>
+  </div>
+
+  <div class="field">
+    <%= f.label :descricao %><br />
+    <%= f.text_field :descricao %>
+  </div>
+  <div class="actions">
+    <%= f.submit nil, :class=>"btn btn-primary" %>
+  </div>
+<% end %>
+
+

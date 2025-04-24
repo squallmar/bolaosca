@@ -1,0 +1,16 @@
+<script type="text/JavaScript">
+  $(function() {
+      <% dt = Bolaosca::Application::MANUT_AT.strftime("%Y/%m/%d/%H/%M/%S").split("/").map{|e| e.to_i} %>
+      <% dt[1] = dt[1]-1%>
+      data = <%= dt %>
+      var austDay = new Date(data[0],data[1],data[2],data[3],data[4],data[5]);
+      // alert(austDay);
+      $('#CountDown.countdown2').countdown({ until: austDay});
+  });
+</script>
+<div id="manut" class="alert">
+   <button type="button" class="close" data-dismiss="alert">&times;</button>
+   O sistema entrará em manutenção em <span id="CountDown" class="countdown2"></span>
+   <br>
+   <span style="display:block; clear:both">Pedimos desculpas pela incoveniência, e gostaríamos de lembrar que as atualizações são sempre necessárias para melhorias e segurança. Grato pela compreensão.</span>
+</div>

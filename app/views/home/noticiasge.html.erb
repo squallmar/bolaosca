@@ -1,0 +1,11 @@
+<div id="rss_news">
+<%= content_tag :h3, "Notícias do Globo Esporte", :class => "title"  %>
+ <% @news.items[0,10].each do |i| %>
+  <div>
+    <%= link_to content_tag(:h4, "#{i.title}"),i.link %>
+    <%=content_tag :p, "#{l i.date}" %>
+    <br>
+    <%= i.description.gsub("<img border='0' src='http://globoesporte.globo.com'",'<r').gsub("90x68",'original').html_safe %>
+  </div>
+ <% end %>
+</div>

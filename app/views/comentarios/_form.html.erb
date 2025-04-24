@@ -1,0 +1,23 @@
+<div class="new-comment comments">
+  <% if current_user.present? %>
+      <%= form_for([@post, @post.comentarios.build]) do |f| %>
+        <div class="avatar">
+            <%= image_tag(current_user.avatar? ? current_user.avatar.thumb.url : no_image_url) -%>
+            <span><%= current_user.apelido || current_user.email.split('@').first %></span>
+         </div>
+
+      <div class="control-group">
+        <%= f.label :texto, :class => 'control-label' %>
+        <div class="controls">
+          <%= f.text_area :texto , :class => 'text_area', :rows => 5, :cols => 80 %>
+        </div>
+      </div>
+
+      <div class="actions">
+        <%= f.submit "Enviar", :class => 'btn  btn-primary pull-right' %>
+       </div>
+    <% end %>
+  <% else %>
+      <%= link_to 'Faça login para fazer um comentário', new_user_session_path  %>
+   <% end %>
+</div>

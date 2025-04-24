@@ -1,0 +1,6 @@
+<%= content_tag :p, (@bolao == bolao_atual ? 'Bolão Atual - ' : '') + @bolao.titulo, :class => "label label-success" %>
+<%- model_class = Rodada -%>
+<div class="page-header">
+  <%= content_tag :h3, "Editar Rodada", :class => "title"  %>
+</div>
+<%= render :partial => 'form' %>

@@ -1,0 +1,57 @@
+<%= content_tag :h3, "Editar Usuário", :class => "title"  %>
+
+<%= form_for(@user) do |f| %>
+  <div class="avatar_edit">
+    <div class="avatar_show">
+      <%=image_tag( @user.avatar? ? @user.avatar.thumb.url : no_image_url )%>
+    </div>
+    <%= content_tag :h3, @user.apelido || @user.email, :style=>"display: inline !important;"%>
+    <br/><br/>
+    <label> Selecionar Avatar</label><br/>
+    <%= f.file_field :avatar, :style =>'width:300px'%>
+    <% if @user.avatar? -%>
+      <p>
+        <label>
+          <%= f.check_box :remove_avatar %>
+          Remover avatar
+        </label>
+      </p>
+    <% end -%>
+  </div>
+<br/>
+
+  <div style="clear:both">
+    <%= f.label :nome %><br />
+    <%= f.text_field :nome %>
+    <%= error_tag @user, :nome %>
+  </div>
+
+  <div>
+    <%= f.label :email %><br />
+    <%= f.email_field :email %>
+    <%= error_tag @user, :email %>
+  </div>
+
+    <div>
+    <%= f.label :apelido %><br />
+    <%= f.text_field :apelido %>
+    <%= error_tag @user, :apelido %>
+  </div>
+
+  <div>
+    <%= f.label :telefone %><br />
+    <%= f.text_field :telefone %>
+    <%= error_tag @user, :telefone %>
+  </div>
+
+  <div>
+    <%= f.label :setor %><br />
+    <%= f.text_field :setor %>
+    <%= error_tag @user, :setor %>
+  </div>
+
+  <div>
+    <%= link_to 'Voltar',:back, :class => 'btn' %>
+    <%= f.submit "Atualizar" , :class => 'btn btn-primary' %></div>
+<% end %>
+

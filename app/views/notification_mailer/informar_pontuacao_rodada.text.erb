@@ -1,0 +1,8 @@
+Olá, <%= @jogador.nome %>
+
+
+  Você fez <%= @pontuacao.pontos %> pontos, na rodada <%= @rodada.numero %> no bolão <%= @bolao.titulo %>.
+Para visualizar a classificação da rodada copie esse link <%= root_url + "boloes/#{@bolao.id}/rodadas#{@rodada.id}/classificacao"%> para  Ver classificação completa do bolão!.
+
+
+Ver classificação completa do bolão! =>>> <%=  root_url + "boloes/#{@bolao.id}/classificacao"  %>

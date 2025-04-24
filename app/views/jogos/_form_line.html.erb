@@ -1,0 +1,14 @@
+<%= form_for [@bolao, @rodada, @jogo], url: bolao_rodada_jogos_path(@bolao, @rodada), html: { class: 'form-horizontal' } do |f| %>
+  <tr>
+    <td>
+      <%= f.select :time_home, Jogo::TIMES, { prompt: 'Selecione o time' }, class: "form-control" %>
+    </td>
+    <td><%= f.number_field :placar_home, class: "form-control", style: "width: 60px", readonly: !@rodada.apostas_encerradas? %></td>
+    <td><b>x</b></td>
+    <td><%= f.number_field :placar_away, class: "form-control", style: "width: 60px", readonly: !@rodada.apostas_encerradas? %></td>
+    <td>
+      <%= f.select :time_away, Jogo::TIMES, { prompt: 'Selecione o time' }, class: "form-control" %>
+    </td>
+    <td><%= f.submit '+ Jogo', class: 'btn btn-primary pull-right' %></td>
+  </tr>
+<% end %>

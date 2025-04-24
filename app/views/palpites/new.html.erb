@@ -1,0 +1,51 @@
+<span  class="label label-info"> <%= @bolao.titulo %></span >
+<span class="label label-info" > Rodada <%= @rodada.numero %></span >
+<div class="page-header">
+  <h3 class="title">Palpites</h3
+  <br>
+  <h5 class="title">NOVA APOSTA</h5>
+</div>
+<%= form_for   'palpites[]', :url => bolao_rodada_palpites_path(@bolao, @rodada), :html=>{:method => :post} do |f| %>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Time(CASA)</th>
+        <th>Vitória<br>(CASA)</th>
+        <th>Vs.<br>(EMPATE)</th>
+        <th>Vitória<br>(FORA)</th>
+        <th>Time(FORA)</th>
+      </tr>
+    </thead>
+    <tbody>
+        <% @palpites.each_with_index do |palpite,i| %>
+          <% jogo = @rodada.jogos[i] %>
+           <tr>
+            <td><%= jogo.time_home %> </td>
+            <td>
+              <%= radio_button_tag "palpites[#{i}]", "1",
+                                   (@palpites_form.present? and @palpites_form[i].present?) ? get_home_on_error(@palpites_form[i]) : false,
+                                   :style=>"width:40px;",
+                                   :class=>"palpite_box",
+                                   :readonly => @rodada.apostas_encerradas? %>
+            </td>
+            <td>
+              <%= radio_button_tag "palpites[#{i}]", "0" ,
+                                   (@palpites_form.present? and @palpites_form[i].present?) ? get_draw_on_error(@palpites_form[i]) : false,
+                                   :style=>"width:40px;",
+                                   :class=>"palpite_box",
+                                   :readonly => @rodada.apostas_encerradas? %>
+            </td>
+            <td>
+              <%= radio_button_tag "palpites[#{i}]", "-1" ,
+                                   (@palpites_form.present? and @palpites_form[i].present?) ? get_away_on_error(@palpites_form[i]) : false,
+                                   :style=>"width:40px",
+                                   :class=>"palpite_box",
+                                   :readonly => @rodada.apostas_encerradas? %>
+             </td>
+            <td><%= jogo.time_away %> </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <%= submit_tag "Salvar Apostas", :class => "btn btn-primary pull-right" %>
+<% end %>

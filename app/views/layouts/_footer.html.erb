@@ -1,0 +1,22 @@
+<div id="footer">
+  <p id="btn2topo" class="icon-arrow-up"></p>
+  <div class="links">
+    <%= link_to root_url, :class => 'escudo-btm' do %>
+    <% end -%>
+      <address>
+        <b>Responsáveis:</b><br>
+        Marco Antonio de Almeida Silva<br>
+        <!-- maas@petrobras.com.br -->
+      </address>
+
+
+      <% mail_content = capture do %>
+         Densenvolvido por
+        <div id="all_ws">
+          <!-- <p>Tel: (22) 9915-  3354</p> -->
+        </div>
+      <% end %>
+
+      <%= mail_to 'marcelmendes05@gmail.com', mail_content,:target => "blank", :class => 'logo_all_ws' %>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+  <%= content_tag :h3, "Adicionar fotos ao álbum", :class => "title"  %>
+<%= form_for 'foto[]' , :url=> album_fotos_path(@album),  :html => { :multipart => true,  :method => :post } do |f| %>
+
+
+  <div class="field">
+    <%= f.label :imagem %><br />
+    <%= file_field_tag "imagem[]", :multiple => true %>
+  </div>
+
+  <div class="field">
+    <%= f.label "Descrição" %><br />
+    <%= f.text_field :descricao %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit 'Adicionar Fotos', :class=>'btn btn-primary'  %>
+  </div>
+
+<% end %>
+
+
+<%= link_to 'Voltar', album_fotos_path, :class => "btn" %>

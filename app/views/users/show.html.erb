@@ -1,0 +1,43 @@
+<%- model_class = @user.class -%>
+<div class="page-header">
+  <div class="avatar_show">
+    <%= image_tag(@user.avatar? ? @user.avatar.thumb.url : no_image_url) %>
+  </div>
+
+  <h2 style="display: inline !important;"><%= @user.apelido if @user.apelido.present? %></h2>
+</div>
+<dl class="">
+  <dt><strong><%= model_class.human_attribute_name(:apelido) %>:</strong></dt>
+  <dd><%= @user.apelido %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:nome) %>:</strong></dt>
+  <dd><%= @user.nome %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:email) %>:</strong></dt>
+  <dd><%= mail_to @user.email, @user.email,:target => "_blank]" %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:telefone) %>:</strong></dt>
+  <dd><%= @user.telefone %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:setor) %>:</strong></dt>
+  <dd><%= @user.setor %></dd>
+
+  <% if admin? -%>
+    <hr>
+    <dt><strong>Administrador:</strong></dt>
+    <dd>
+      <%= content_tag :span, @user.admin? ? '✓' : '&times;'.html_safe,
+                         :class => "label label-#{@user.admin? ? 'success' : 'important'} " %>
+      <BR><BR>
+      <%= (link_to(@user.admin? ? 'Tirar Permissão de super-admin' : 'Dar Permissão de super-admin', alternar_super_user_path(@user),:method => 'put',:class => 'btn btn-inverse btn-mini')) unless User.admins.size == 1 %>
+    </dd>
+  <% end -%>
+</dl>
+<div class="form-actions">
+  <%= link_to t('.back', :default => t("helpers.links.back")),
+              admin? ? users_path : :back , :class => 'btn'  %>
+  <%= link_to(t('.edit', :default => t("helpers.links.edit")),
+              admin? ? edit_user_path(@user) : edit_registration_path,
+              :class => 'btn btn-primary') if current_user == @user or admin? %>
+  <%= link_to(t('.destroy', :default => t("helpers.links.destroy")),
+              user_path(@user),
+              :method => 'delete',
+              :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Tem certeza?')),
+              :class => 'btn btn-danger') if(!@user.admin? and admin?) %>
+</div>
