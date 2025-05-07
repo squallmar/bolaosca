@@ -15,8 +15,10 @@ class RodadasController < ApplicationController
                                  .where("data_final_apostas > ?", Time.now)
                                  .order(:data_inicio_apostas)
                                  .first
-    # ... resto do código ...
+    @jogos = @rodada.jogos.order(:data_jogo)
   end
+
+
 
   def new
     @rodada = @bolao.rodadas.build
@@ -37,6 +39,8 @@ class RodadasController < ApplicationController
       render action: "new"
     end
   end
+
+
   def update
     @rodada = @bolao.rodadas.find(params[:id]) # Busca pelo ID normal
 

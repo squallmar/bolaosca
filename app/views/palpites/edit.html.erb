@@ -1,52 +1,58 @@
-<span  class="label label-info"> <%= @bolao.titulo %></span >
-<span class="label label-info" > Rodada <%= @rodada.numero %></span >
-<div class="page-header">
-  <h3 class="title">Palpites</h3
-  <br>
-  <h5 class="title">Editando palpites</h5>
+<div class="mb-2">
+  <span class="label label-info bg-blue-500 text-white rounded px-2 py-1 text-sm font-medium"><%= @bolao.titulo %></span>
+  <span class="label label-info bg-blue-500 text-white rounded px-2 py-1 text-sm font-medium">Rodada <%= @rodada.numero %></span>
 </div>
-<%= form_for  'palpites[]', :url => salvar_bolao_rodada_palpites_path(@bolao, @rodada), :html=>{:method => :put} do |f| %>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Time(CASA)</th>
-      <th>Vitória<br>(CASA)</th>
-      <th>Vs.<br>(EMPATE)</th>
-      <th>Vitória<br>(FORA)</th>
-      <th>Time(FORA)</th>
-    </tr>
-  </thead>
-    </thead>
-    <tbody>
-        <% @palpites.each_with_index do |palpite,i| %>
+
+<div class="mb-6">
+  <h3 class="page-header title text-2xl font-semibold text-gray-800">Palpites</h3>
+  <br>
+  <h5 class="title text-lg font-semibold text-gray-700">Editando palpites</h5>
+</div>
+
+<%= form_with(url: salvar_bolao_rodada_palpites_path(@bolao, @rodada), method: :put, data: { turbo: false }) do |f| %>
+  <div class="overflow-x-auto">
+    <table class="table table-striped min-w-full bg-white shadow-md rounded-lg">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time(CASA)</th>
+          <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Vitória<br>(CASA)</th>
+          <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Vs.<br>(EMPATE)</th>
+          <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Vitória<br>(FORA)</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time(FORA)</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% @palpites.each_with_index do |palpite, i| %>
           <% jogo = @rodada.jogos[i] %>
-           <tr>
-            <td><%= jogo.time_home %> </td>
-            <td>
+          <tr>
+            <td class="px-4 py-4 whitespace-nowrap"><%= jogo.time_home %></td>
+            <td class="px-4 py-4 whitespace-nowrap text-center">
               <%= radio_button_tag "palpites[#{i}]", "1",
-                                   put_home_on_edit([palpite.home,palpite.away]),
-                                   :style=>"width:40px;",
-                                   :class=>"palpite_box",
-                                   :readonly => @rodada.apostas_encerradas? %>
+                                  palpite.home == 1,
+                                  class: "form-radio h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500",
+                                  disabled: @rodada.apostas_encerradas? %>
             </td>
-            <td>
-              <%= radio_button_tag "palpites[#{i}]", "0" ,
-                                   put_draw_on_edit([palpite.home,palpite.away]),
-                                   :style=>"width:40px;",
-                                   :class=>"palpite_box",
-                                   :readonly => @rodada.apostas_encerradas? %>
+            <td class="px-4 py-4 whitespace-nowrap text-center">
+              <%= radio_button_tag "palpites[#{i}]", "0",
+                                  palpite.home == 0 && palpite.away == 0,
+                                  class: "form-radio h-5 w-5 text-gray-600 rounded border-gray-300 focus:ring-gray-500",
+                                  disabled: @rodada.apostas_encerradas? %>
             </td>
-            <td>
-              <%= radio_button_tag "palpites[#{i}]", "-1" ,
-                                   put_away_on_edit([palpite.home,palpite.away]),
-                                   :style=>"width:40px",
-                                   :class=>"palpite_box",
-                                   :readonly => @rodada.apostas_encerradas? %>
-             </td>
-            <td><%= jogo.time_away %> </td>
+            <td class="px-4 py-4 whitespace-nowrap text-center">
+              <%= radio_button_tag "palpites[#{i}]", "-1",
+                                  palpite.away == -1,
+                                  class: "form-radio h-5 w-5 text-red-600 rounded border-gray-300 focus:ring-red-500",
+                                  disabled: @rodada.apostas_encerradas? %>
+            </td>
+            <td class="px-4 py-4 whitespace-nowrap"><%= jogo.time_away %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
-    <%= submit_tag "Salvar Palpites", :class => "btn btn-primary pull-right" %>
-  <% end -%>
+  </div>
+  <div class="mt-4 text-right">
+    <%= submit_tag "Salvar Palpites", 
+        class: "btn btn-primary bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline",
+        disabled: @rodada.apostas_encerradas? %>
+  </div>
+<% end %>

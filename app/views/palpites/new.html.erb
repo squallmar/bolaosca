@@ -1,51 +1,90 @@
-<span  class="label label-info"> <%= @bolao.titulo %></span >
-<span class="label label-info" > Rodada <%= @rodada.numero %></span >
-<div class="page-header">
-  <h3 class="title">Palpites</h3
-  <br>
-  <h5 class="title">NOVA APOSTA</h5>
-</div>
-<%= form_for   'palpites[]', :url => bolao_rodada_palpites_path(@bolao, @rodada), :html=>{:method => :post} do |f| %>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Time(CASA)</th>
-        <th>Vitória<br>(CASA)</th>
-        <th>Vs.<br>(EMPATE)</th>
-        <th>Vitória<br>(FORA)</th>
-        <th>Time(FORA)</th>
-      </tr>
-    </thead>
-    <tbody>
-        <% @palpites.each_with_index do |palpite,i| %>
-          <% jogo = @rodada.jogos[i] %>
-           <tr>
-            <td><%= jogo.time_home %> </td>
-            <td>
-              <%= radio_button_tag "palpites[#{i}]", "1",
-                                   (@palpites_form.present? and @palpites_form[i].present?) ? get_home_on_error(@palpites_form[i]) : false,
-                                   :style=>"width:40px;",
-                                   :class=>"palpite_box",
-                                   :readonly => @rodada.apostas_encerradas? %>
-            </td>
-            <td>
-              <%= radio_button_tag "palpites[#{i}]", "0" ,
-                                   (@palpites_form.present? and @palpites_form[i].present?) ? get_draw_on_error(@palpites_form[i]) : false,
-                                   :style=>"width:40px;",
-                                   :class=>"palpite_box",
-                                   :readonly => @rodada.apostas_encerradas? %>
-            </td>
-            <td>
-              <%= radio_button_tag "palpites[#{i}]", "-1" ,
-                                   (@palpites_form.present? and @palpites_form[i].present?) ? get_away_on_error(@palpites_form[i]) : false,
-                                   :style=>"width:40px",
-                                   :class=>"palpite_box",
-                                   :readonly => @rodada.apostas_encerradas? %>
-             </td>
-            <td><%= jogo.time_away %> </td>
+<div class="max-w-4xl mx-auto px-4 py-6">
+  <!-- Cabeçalho -->
+  <div class="text-center mb-6">
+    <div class="mb-2">
+      <span class="bg-blue-500 text-white rounded px-2 py-1 text-sm font-medium"><%= @bolao.titulo %></span>
+      <span class="bg-blue-500 text-white rounded px-2 py-1 text-sm font-medium">Jornada <%= @rodada.numero %></span>
+    </div>
+
+    <h3 class="text-2xl font-semibold text-gray-800 mb-2">Palpites</h3>
+    <h5 class="text-lg font-semibold text-gray-700">NOVA APOSTA</h5>
+  </div>
+
+  <!-- Formulário -->
+  <%= form_with(url: apostando_bolao_rodada_palpites_path(@bolao, @rodada), method: :post, data: { turbo: false }) do |f| %>    
+    <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipa (CASA)</th>
+            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Vitória<br>(CASA)</th>
+            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Empate</th>
+            <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Vitória<br>(FORA)</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipa (FORA)</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
-  <%= submit_tag "Salvar Apostas", :class => "btn btn-primary pull-right" %>
-<% end %>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @palpites.each_with_index do |palpite, i| %>
+            <% jogo = @rodada.jogos[i] %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-4 text-center text-sm font-medium text-gray-900"><%= i + 1 %></td>
+              <td class="px-4 py-4 text-sm text-gray-900"><%= jogo.time_home %></td>
+              
+              <!-- Vitória Casa -->
+              <td class="px-4 py-4 text-center">
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <%= radio_button_tag "palpites[#{i}]", "1",
+                      (@palpites_form.present? && @palpites_form[i].present?) ? get_home_on_error(@palpites_form[i]) : false,
+                      class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 peer",
+                      disabled: @rodada.apostas_encerradas? %>
+                  <span class="ml-2 text-green-500 font-bold opacity-0 peer-checked:opacity-100 transition-opacity duration-200">✓</span>
+                </label>
+              </td>
+              
+              <!-- Empate -->
+              <td class="px-4 py-4 text-center">
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <%= radio_button_tag "palpites[#{i}]", "0",
+                      (@palpites_form.present? && @palpites_form[i].present?) ? get_draw_on_error(@palpites_form[i]) : false,
+                      class: "h-4 w-4 text-gray-600 focus:ring-gray-500 border-gray-300 peer",
+                      disabled: @rodada.apostas_encerradas? %>
+                  <span class="ml-2 text-green-500 font-bold opacity-0 peer-checked:opacity-100 transition-opacity duration-200">✓</span>
+                </label>
+              </td>
+              
+              <!-- Vitória Fora -->
+              <td class="px-4 py-4 text-center">
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <%= radio_button_tag "palpites[#{i}]", "-1",
+                      (@palpites_form.present? && @palpites_form[i].present?) ? get_away_on_error(@palpites_form[i]) : false,
+                      class: "h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 peer",
+                      disabled: @rodada.apostas_encerradas? %>
+                  <span class="ml-2 text-green-500 font-bold opacity-0 peer-checked:opacity-100 transition-opacity duration-200">✓</span>
+                </label>
+              </td>
+              
+              <td class="px-4 py-4 text-sm text-gray-900"><%= jogo.time_away %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex justify-center mt-6">
+      <%= submit_tag "Salvar Apostas", 
+          class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline disabled:opacity-50",
+          disabled: @rodada.apostas_encerradas? %>
+    </div>
+  <% end %>
+</div>
+
+<!-- Script para ativar ✓ nos selecionados -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.peer:checked').forEach(radio => {
+    const check = radio.nextElementSibling;
+    if (check) check.classList.add('opacity-100');
+  });
+});
+</script>

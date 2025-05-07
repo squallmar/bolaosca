@@ -1,11 +1,13 @@
 Bolaosca::Application.routes.draw do
-  # Rotas de preferências do usuário
-  get "preferencias" => "opcaos#edit", as: :edit_preferencias
-  put "preferencias" => "opcaos#update", as: :update_preferencias
+  # Rotas de preferências
+  get "preferencias" => "opcaos#edit", as: "preferencias"
+  put "preferencias" => "opcaos#update", as: "atualizar_preferencias"
 
-  # Rotas principais do bolão
+  # Rotas de bolões
   resources :bolaos, path: "boloes" do
-    get "classificacao", on: :member
+    member do
+      get "classificacao"
+    end
 
     resources :rodadas do
       member do
@@ -15,49 +17,42 @@ Bolaosca::Application.routes.draw do
 
       resources :jogos, except: [ :index ] do
         collection do
-          get "editar_multiplos" => "jogos#edit_multiplos", as: :edit_multiplos
-          patch "atualizar_multiplos" => "jogos#update_multiplos", as: :update_multiplos
+          get :edit_multiplos
+          put :update_multiplos
         end
       end
 
-      resources :palpites, except: [ :show, :destroy ] do
-        collection do
-          get "apostando" => "palpites#new", as: :new
-          put "salvar" => "palpites#update", as: :update
-          post "create", as: :create
+      resources :palpites, except: [ :show, :destroy, :update, :edit, :new, :create ] do
+          collection do
+            get "apostando" => "palpites#new"
+            post "apostando" => "palpites#create"
+            get "edit"
+            put "salvar" => "palpites#update"
+          end
         end
+    end
+
+    resources :users, only: [ :index, :show, :destroy ], path: "participantes", module: :bolaos do
+      member do
+        put "inscrever"
+        get "comparar"
       end
     end
 
-    # Rotas de participantes
-    scope module: :bolaos do
-      resources :users, only: [ :index, :show, :destroy ],
-                       path: "participantes",
-                       controller: "users" do
-        member do
-          put "inscrever"
-          get "comparar"
-        end
-      end
-    end
-
-    get "/eu_no_bolao" => "bolaos/users#show", as: :eu_no_bolao
+    get "/eu_no_bolao" => "bolaos/users#show"
   end
 
   # Rotas do blog
   resources :posts, path: "blog" do
-    resources :comentarios, only: [ :create, :destroy ]
+    resources :comentarios, except: [ :show, :index, :edit, :new, :update ]
   end
 
   # Rotas de álbuns e fotos
   resources :albums do
-    member do
-      put "tornar_capa"
-    end
-
     resources :fotos, except: [ :show, :index ] do
-      resources :comentarios, only: [ :create, :destroy ], module: :fotos
+      resources :comentarios, except: [ :show, :index, :edit, :new, :update ], module: :fotos
     end
+    put "tornar_capa", on: :member
   end
 
   # Rotas de banners
@@ -66,10 +61,10 @@ Bolaosca::Application.routes.draw do
   end
 
   # Rotas de contato
-  resources :contatos, only: [ :new, :create ], path: "contato",
-            path_names: { new: "" }
+  resources :contatos, only: [ :new, :create ], path: "contato", path_names: { new: "", create: "enviar" }
 
-  # Rotas estáticas
+  # Rotas da home
+  get "home/index"
   get "tabela" => "home#tabela", as: "tabela"
   get "noticiasge" => "home#noticiasge", as: "noticiasge"
 
@@ -86,22 +81,18 @@ Bolaosca::Application.routes.draw do
              controllers: {
                registrations: "registrations",
                invitations: "invitations",
-               sessions: "sessions"
+               users: "users"
              },
-             path_names: {
-               sign_in: "login",
-               sign_out: "logout"
-             }
+             path_names: { sign_in: "login" }
 
-  # Rotas customizadas do perfil
   as :user do
-    get "perfil/alterar_senha" => "registrations#alterar_senha", as: "alterar_senha"
-    get "perfil/alterar_avatar" => "registrations#alterar_avatar", as: "alterar_avatar"
-    get "perfil" => "registrations#show", as: "perfil"
-    get "perfil/edit" => "registrations#edit", as: "edit_perfil"
-    put "perfil" => "registrations#update"
+    get "perfil/alterar_senha" => "registrations#alterar_senha", as: "users_alterar_senha"
+    get "perfil/alterar_avatar" => "registrations#alterar_avatar", as: "users_alterar_avatar"
+    get "perfil" => "registrations#show", as: "users_show"
+    get "perfil/edit" => "registrations#edit", as: "edit_registration"
+    put "perfil" => "registrations#update", as: "registration"
   end
 
-  # Rota raiz
+  # Rota root
   root to: "home#index"
 end

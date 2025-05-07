@@ -1,11 +1,10 @@
 # encoding: UTF-8
 
 class ApplicationController < ActionController::Base
-  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   protect_from_forgery
   before_action :store_location
-  before_action :authenticate_user!, only: [ :requer_permissao_superadmin, :verificar_user_inscrito_em_bolao ]
-  before_action :requer_permissao_superadmin, only: [ :verificar_user_inscrito_em_bolao ]
+  before_action :authenticate_user!, only: [ :verificar_user_inscrito_em_bolao ]
+  before_action :requer_permissao_superadmin, only: [ :authenticate_inviter! ]
   helper_method :admin?, :banners_patrocinadores, :banners_apoiadores, :bolao_atual,
                 :rodada_atual, :ultima_rodada_aberta
 
@@ -32,7 +31,6 @@ class ApplicationController < ActionController::Base
       bolao_path(resource.bolaos.first.id)
     else
       # Fallback seguro - redireciona para a página inicial
-      # Você pode trocar por outra rota como dashboard_path se preferir
       root_path
     end
   end
@@ -45,11 +43,18 @@ class ApplicationController < ActionController::Base
     session[:previous_urls].last || root_path
   end
 
+  def authenticate_inviter!
+    unless current_user&.admin?
+      flash[:alert] = "Você não tem permissão para acessar esta área."
+      redirect_to root_url and return
+    end
+  end
+
   def requer_permissao_superadmin
     flash.keep
     unless admin?
       flash[:warning] = "Você precisa estar conectado como superadmin para fazer essa ação"
-      render "layouts/denied_permission"
+      render "layouts/denied_permission" and return
     end
   end
 
@@ -83,5 +88,11 @@ class ApplicationController < ActionController::Base
     Rails.logger.error "Registro não encontrado: #{params.inspect}"
     flash[:error] = "Registro não encontrado"
     redirect_to root_path
+  end
+
+  # Método para ações exclusivas de administrador
+  def admin_actions
+    authenticate_inviter!
+    requer_permissao_superadmin
   end
 end

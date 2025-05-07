@@ -1,6 +1,6 @@
 <ul class="space-y-1">
   <li>
-    <%= link_to edit_perfil_path, 
+    <%= link_to edit_registration_path, 
           class: "block px-4 py-2 hover:bg-gray-100 transition-colors duration-150",
           "aria-label": "Alterar dados pessoais" do %>
       <span class="flex items-center">
@@ -13,7 +13,7 @@
   </li>
 
   <li>
-    <%= link_to alterar_senha_path, 
+    <%= link_to users_alterar_senha_path, 
           class: "block px-4 py-2 hover:bg-gray-100 transition-colors duration-150",
           data: { 
             confirm: "Você efetuará logout do aplicativo para requisitar uma alteração de senha, para isso precisará do atual email da sua conta! Deseja continuar?" 
@@ -29,7 +29,7 @@
   </li>
 
   <li>
-    <%= link_to alterar_avatar_path, 
+    <%= link_to users_alterar_avatar_path, 
           class: "block px-4 py-2 hover:bg-gray-100 transition-colors duration-150",
           "aria-label": "Alterar avatar" do %>
       <span class="flex items-center">
@@ -42,7 +42,7 @@
   </li>
 
   <li>
-    <%= link_to edit_preferencias_path, 
+    <%= link_to preferencias_path, 
           class: "block px-4 py-2 hover:bg-gray-100 transition-colors duration-150",
           "aria-label": "Editar preferências" do %>
       <span class="flex items-center">
@@ -56,11 +56,12 @@
   </li>
 
   <li class="border-t border-gray-200 mt-1 pt-1">
-    <%= link_to destroy_user_session_path, 
+    <%= button_to destroy_user_session_path,
           method: :delete,
-          class: "block px-4 py-2 hover:bg-gray-100 text-red-600 transition-colors duration-150",
+          class: "w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600 transition-colors duration-150",
+          form_class: "inline",
           "aria-label": "Sair do sistema" do %>
-      <span class="flex items-center">
+      <span class="flex items-center pointer-on-hover">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
         </svg>

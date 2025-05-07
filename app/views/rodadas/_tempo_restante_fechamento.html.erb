@@ -2,7 +2,7 @@
   <script>
     $(function() {
       var endDate = new Date("<%= @current_round.betting_end_time.iso8601 %>");
-      
+
       $('#bettingCountdown').countdown({
         until: endDate,
         onExpiry: function() {
@@ -14,19 +14,19 @@
     });
   </script>
 
-  <div class="countdown-container">
-    <h4><i class="icon-time"></i> Apostas Abertas</h4>
-    <p>Encerramento em:</p>
-    <div id="bettingCountdown"></div>
+  <div class=" mt-25 countdown-container bg-white shadow-md rounded-lg p-6 text-center">
+    <h4 class="text-xl font-semibold text-gray-800 mb-2"><i class="icon-time mr-2 align-middle"></i> Apostas Abertas</h4>
+    <p class="text-gray-600 mb-4">Encerramento em:</p>
+    <div id="bettingCountdown" class="text-2xl font-bold text-blue-600 mb-4"></div>
 
     <%= link_to new_bolao_rodada_palpites_path(@bolao, @current_round),
-                class: "btn btn-primary btn-lg" do %>
-      <i class="icon-edit"></i> Fazer Apostas
+                class: "btn btn-primary btn-lg bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full" do %>
+      <i class="icon-edit mr-2 align-middle"></i> Fazer Apostas
     <% end %>
   </div>
 <% else %>
-  <div class="countdown-container">
-    <h4><i class="icon-time"></i> Nenhuma rodada aberta no momento</h4>
-    <p>Fique ligado para a próxima!</p>
+  <div class=" mt-20 countdown-container bg-gray-100 border border-gray-300 rounded-lg p-6 text-center">
+    <h4 class="text-xl font-semibold text-gray-700 mb-2"><i class="icon-time mr-2 align-middle"></i> Nenhuma rodada aberta no momento</h4>
+    <p class="text-gray-500">Fique ligado para a próxima!</p>
   </div>
 <% end %>

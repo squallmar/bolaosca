@@ -199,10 +199,56 @@ pt-BR:
       long: ! '%A, %d de %B de %Y, %H:%M h'
       short: ! '%d/%m, %H:%M h'
     pm: ''
-  # remove these aliases after 'activemodel' and 'activerecord' namespaces are removed from Rails repository
   activemodel:
     errors:
       <<: *errors
   activerecord:
     errors:
       <<: *errors
+    models:
+      jogo: "Jogo"
+      rodada: "Rodada"
+      bolao: "Bolão"
+      user: "Usuário"
+    attributes:
+      jogo:
+        time_home: "Time da Casa"
+        time_away: "Time Visitante"
+        placar_home: "Placar Casa"
+        placar_away: "Placar Visitante"
+        data: "Data do Jogo"
+        user: "Usuário"
+        rodada: "Rodada"
+        created_at: "Criado em"
+        updated_at: "Atualizado em"
+      rodada:
+        numero: "Número"
+        data_inicio_apostas: "Data de início das apostas"
+        data_final_apostas: "Data final das apostas"
+        bolao: "Bolão"
+        jogos: "Jogos"
+      user:
+        email: "E-mail"
+        password: "Senha"
+        name: "Nome"
+    errors:
+      models:
+        jogo:
+          attributes:
+            time_home:
+              blank: "deve ser selecionado"
+              inclusion: "não é um time válido"
+            time_away:
+              blank: "deve ser selecionado"
+              inclusion: "não é um time válido"
+              different: "deve ser diferente do time da casa"
+            placar_home:
+              blank: "não pode ficar em branco"
+              numericality: "deve ser um número"
+            placar_away:
+              blank: "não pode ficar em branco"
+              numericality: "deve ser um número"
+            user:
+              required: "deve ser associado a um usuário"
+              blank: "não pode ficar em branco"
+          required: "Usuário é obrigatório"

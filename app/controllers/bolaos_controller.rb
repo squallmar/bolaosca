@@ -6,7 +6,7 @@ class BolaosController < ApplicationController
     @bolaos = if admin?
                 Bolao.all.order(created_at: :desc)
     else
-                Bolao.disponiveis.order(data_inicio: :desc)
+                Bolao.em_andamento.order(data_inicio: :desc)
     end.to_a # Garante que será um array vazio se não houver resultados
   end
 

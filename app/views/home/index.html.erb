@@ -79,7 +79,9 @@
                       bolao_rodada_path(@bolao, rodada) %>
                 </td>
                 <td>
-                  <p><%= current_user ? situacao(rodada) : rodada.situacao_nao_admin %></p>
+                  <p class="<%= situacao(rodada).downcase.gsub(' ', '-') %>">
+                    <%= situacao(rodada) %>
+                  </p>
                 </td>
               </tr>
             <% end %>

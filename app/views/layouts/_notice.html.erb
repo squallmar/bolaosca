@@ -1,20 +1,39 @@
-  <% unless notice.nil? %>
-    <div class="notice alert">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-      <%= content_tag :p, notice %>
+<% flash.each do |type, message| %>
+  <% alert_type = case type.to_sym
+                  when :notice then 'success'
+                  when :alert then 'warning'
+                  when :warning then 'danger'
+                  else 'info'
+                 end %>
+  
+  <div class="flash-message fixed top-4 right-4 w-full max-w-xs z-50">
+    <div class="alert alert-<%= alert_type %> shadow-lg rounded-lg border-l-4 border-<%= alert_type %>-500 flex items-start">
+      <div class="flex-1">
+        <%= content_tag :p, message, class: "text-sm" %>
+      </div>
+      <button type="button" class="close-btn ml-2 text-gray-500 hover:text-gray-700 focus:outline-none" data-dismiss="alert">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
     </div>
-    <% end -%>
+  </div>
+<% end %>
 
-    <% unless flash[:alert].nil? %>
-    <div class="alert">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-      <%= content_tag :p, alert %>
-    </div>
-    <% end -%>
-
-    <% unless flash[:warning].nil? %>
-    <div class="alert alert-danger">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-      <%= content_tag :p, flash[:warning] %>
-    </div>
-    <% end -%>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Fechar mensagens flash ao clicar no botão
+  document.querySelectorAll('.close-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      this.closest('.flash-message').remove();
+    });
+  });
+  
+  // Auto-fechar mensagens após 5 segundos
+  document.querySelectorAll('.flash-message').forEach(message => {
+    setTimeout(() => {
+      message.remove();
+    }, 5000);
+    });
+  });
+</script>

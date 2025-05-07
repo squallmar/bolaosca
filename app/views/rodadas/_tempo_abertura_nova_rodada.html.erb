@@ -1,22 +1,55 @@
-<script type="text/JavaScript">
-  $(function() {
-      <% dt = @bolao_atual.rodadas.futuras.first.data_inicio_apostas.strftime("%Y/%m/%d/%H/%M/%S").split("/").map{|e| e.to_i} %>
-      <% dt[1] = dt[1]-1%>
-      data = <%= dt %>
-      var austDay = new Date(data[0],data[1],data[2],data[3],data[4],data[5]);
-      $('#CountDown').countdown({ until: austDay, onExpiry: function(){
-        $('.countdown-span').fadeOut(700);
-        location.reload();
+<!-- Navbar ou seção de status -->
+<nav class="mt-15 bg-red-50 border-b border-red-200 py-3">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col md:flex-row items-center justify-between">
+      <div class="flex items-center mb-3 md:mb-0">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span class="font-semibold text-red-800">APOSTAS FECHADAS</span>
+      </div>
+      
+      <div class="text-center">
+        <p class="text-sm text-red-700">Próximas apostas abrem em:</p>
+        <div id="countdown-display" class="font-mono font-bold text-red-600">
+          <%= distance_of_time_in_words(Time.current, @bolao_atual.rodadas.futuras.first.data_inicio_apostas) %>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  <% if @bolao_atual && @bolao_atual.rodadas.futuras.first && @bolao_atual.rodadas.futuras.first.data_inicio_apostas %>
+    // Configura a data final da contagem regressiva
+    const countDownDate = new Date("<%= @bolao_atual.rodadas.futuras.first.data_inicio_apostas.to_fs(:iso8601) %>").getTime();
+
+    // Atualiza o contador a cada 1 segundo
+    const x = setInterval(function() {
+      // Pega a data e hora atual
+      const now = new Date().getTime();
+      
+      // Calcula a diferença entre agora e a data final
+      const distance = countDownDate - now;
+      
+      // Cálculos de tempo
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      // Mostra o resultado no elemento com id="countdown-display"
+      document.getElementById("countdown-display").innerHTML = 
+        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      
+      // Se o contador terminar, mostra algum texto
+      if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("countdown-display").innerHTML = "APOSTAS ABERTAS!";
+        location.reload(); // Recarrega a página
       }
-    });
-  });
+    }, 1000);
+  <% end %>
+});
 </script>
-<div class="span3 countdown-span">
-
-  <H4 ><i class="icon-2x icon-time"></i> APOSTAS FECHADAS</H4>
-  <p> As apostas para a próxima rodada abrirão em:</p>
-  <H6 id="CountDown"> </H6>
-  <br>
-
-</div>
-<br>

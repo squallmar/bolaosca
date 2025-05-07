@@ -1,144 +1,169 @@
 class PalpitesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_bolao_and_rodada
-  before_action :check_user_subscription
-  before_action :check_betting_period, except: [ :index ]
-  before_action :load_user_bets, except: [ :create, :index ]
-  before_action :validate_bets, only: [ :create, :update ]
+  before_action :get_bolao_and_rodada
+  before_action :verificar_user_inscrito_em_bolao
+  before_action :verificar_rodada_com_apostas_nao_encerradas, except: [ :index ]
+  before_action :get_palpites, except: [ :create, :index ]
+  before_action :verificar_aposta, only: [ :create, :update ]
 
   def index
-    @user = set_view_user
-    @bets = @user.bets.for_round(@rodada.id).ordered
-    @score = Score.for_round(@rodada.id).find_by(user_id: @user.id)&.points
-    @games = @rodada.games.ordered
-
-    if @bets.empty?
-      flash[:alert] = "Você ainda não fez palpites para esta rodada!"
-      redirect_to new_bolao_rodada_palpites_path(@bolao, @rodada)
+    @user = params[:user_id] ? User.find(params[:user_id]) : current_user
+    @palpites = @user.palpites.da_rodada(@rodada.id).to_a 
+    @jogos = @rodada.jogos.order(:id) 
+    @pontuacao = Pontuacao.na_rodada(@rodada.id).find_by(user_id: @user.id)&.pontos || 0
+  
+    if @palpites.empty?
+      flash[:warning] = "Nenhum palpite encontrado para esta rodada."
+      redirect_to [@bolao, @rodada]
     end
   end
 
   def new
-    if @bets.empty?
-      @rodada.games.ordered.each do |game|
-        @bets << current_user.bets.build(
-          game_id: game.id,
-          round_id: @rodada.id,
+    edit unless @palpites.present?
+    @palpites_form = flash[:data] if flash[:data].present?
+    @palpites = current_user.palpites.da_rodada(@rodada.id)
+    @rodada.jogos.each do |jogo|
+      unless @palpites.any? { |p| p.jogo_id == jogo.id }
+        @palpites += [ current_user.palpites.build(
+          jogo_id: jogo.id,
+          rodada_id: @rodada.id,
           user_id: current_user.id,
           bolao_id: @bolao.id
-        )
+
+        ) ]
+
       end
     end
+  end
 
-    @bet_form = flash[:form_data] if flash[:form_data]
-    @games = @rodada.games.ordered
+  def edit
+    @palpites_form = flash[:data] if flash[:data].present?
+
+    if @palpites.empty?
+      flash[:warning] = "Ainda não adicionou nenhum palpite! <br><br> <a class='btn icon-legal icon-white btn-success' href='#{apostando_bolao_rodada_palpites_path(@bolao, @rodada)}'>Apostar</a>".html_safe
+      redirect_to [ @bolao, @rodada ]
+    end
   end
 
   def create
-    @errors = []
-    @games = @rodada.games.ordered
+    @erros = []
+    @jogos = @rodada.jogos
 
-    params[:bets].to_unsafe_h.each do |index, value|
-      game = @games[index.to_i]
+    @jogos.each do |jogo|
+      resultado = params[:palpites][jogo.id.to_s]
+      next unless resultado
 
-      bet = current_user.bets.find_or_initialize_by(
-        game_id: game.id,
-        round_id: @rodada.id,
+      home = "0"
+      away = "0"
+      home = "1" if resultado == "1"
+      away = "1" if resultado == "-1"
+
+      palpite = current_user.palpites.create(
+        away: away,
+        home: home,
+        rodada_id: @rodada.id,
+        jogo_id: jogo.id,
         bolao_id: @bolao.id
       )
 
-      bet.assign_attributes(
-        home: value == "1" ? "1" : "0",
-        away: value == "-1" ? "1" : "0"
-      )
-
-      unless bet.save
-        @errors << { game: game.id, error: bet.errors.full_messages.join(", ") }
-      end
+      @erros << palpite.errors.full_messages unless palpite.persisted?
     end
 
-    handle_flash_messages
-    redirect_after_save
+    if @erros.empty?
+      flash[:notice] = "<b><i class='icon-beer icon-2x'> APOSTAS FEITAS COM SUCESSO!!! Boa Sorte!</b></i></H2><p> LEMBRANDO QUE VOCÊ AINDA PODERÁ ALTERÁ-LAS ATÉ A HORA DE FECHAMENTO DE APOSTAS.".html_safe
+    else
+      flash[:warning] = "Partidas não foram atualizadas pois contêm erros: <br><br>#{@erros.join('<br>')}".html_safe
+    end
+
+    redirect_to bolao_rodada_palpites_path(@bolao, @rodada)
   end
 
   def update
-    @errors = []
-    @games = @rodada.games.ordered
+    puts "PARAMS RECEBIDOS: #{params[:palpites].inspect}"
+    @erros = []
 
-    params[:bets].to_unsafe_h.each do |index, value|
-      bet = @bets[index.to_i]
+    params[:palpites].each do |jogo_index, resultado|
+      jogo = @rodada.jogos[jogo_index.to_i]
+      palpite = current_user.palpites.find_or_initialize_by(jogo_id: jogo.id)
 
-      unless bet.update(
-        home: value == "1" ? "1" : "0",
-        away: value == "-1" ? "1" : "0"
-      )
-        @errors << { game: @games[index.to_i].id, error: bet.errors.full_messages.join(", ") }
+      case resultado
+      when "1"  # Vitória casa
+        palpite.update!(home: 1, away: 0)
+      when "0"  # Empate
+        palpite.update!(home: 0, away: 0)
+      when "-1" # Vitória visitante
+        palpite.update!(home: 0, away: -1)
       end
+    rescue => e
+      @erros << "Jogo #{jogo.id}: #{e.message}"
     end
 
-    handle_flash_messages
-    redirect_after_save
+    if @erros.empty?
+      redirect_to bolao_rodada_palpites_path(@bolao, @rodada),
+        notice: "Palpites atualizados!"
+    else
+      flash[:error] = "Erros: #{@erros.join(', ')}"
+      redirect_to edit_bolao_rodada_palpites_path(@bolao, @rodada)
+    end
   end
 
   private
 
-  def set_bolao_and_rodada
+  def get_bolao_and_rodada
     @bolao = Bolao.friendly.find(params[:bolao_id])
-    @rodada = @bolao.rounds.friendly.find(params[:rodada_id])
+    @rodada = @bolao.rodadas.friendly.find(params[:rodada_id])
   rescue ActiveRecord::RecordNotFound
-    redirect_to root_path, alert: "Bolão ou rodada não encontrados"
+    redirect_to root_path, alert: "Bolão ou rodada não encontrados."
   end
 
-  def check_user_subscription
-    unless current_user.subscribed_to?(@bolao)
-      redirect_to @bolao, alert: "Você precisa estar inscrito no bolão para apostar"
+  def verificar_user_inscrito_em_bolao
+    unless @bolao.users.include?(current_user)
+      redirect_to root_path, alert: "Você não está inscrito neste bolão."
     end
   end
 
-  def check_betting_period
-    if @rodada.betting_closed?
-      redirect_to bolao_rodada_path(@bolao, @rodada), alert: "Período de apostas encerrado"
+  def verificar_rodada_com_apostas_nao_encerradas
+    return unless @rodada.apostas_encerradas?
+    redirect_to [ @bolao, @rodada ], alert: "Período de apostas encerrado. Não é possível alterar palpites."
+  end
+
+  def get_palpites
+    @palpites = current_user.palpites.da_rodada(@rodada.id)
+  end
+
+  def verificar_aposta
+    @palpites_form = params.require(:palpites).permit!.to_h
+
+    unless @palpites_form.present? &&
+           @palpites_form.keys.size == @rodada.jogos.size &&
+           Palpite.validate_bet_choices(@palpites_form.values)
+
+      if @palpites_form.keys.size != @rodada.jogos.size
+        message = "Você deve preencher palpites para todos os #{@rodada.jogos.size} jogos."
+      else
+        message = "Limite excedido: máximo 10 vitórias, 10 empates ou 10 derrotas."
+      end
+
+      flash[:error] = message
+      flash[:data] = @palpites_form
+      redirect_to request.referer || bolao_rodada_palpites_path(@bolao, @rodada)
     end
   end
 
-  def load_user_bets
-    @bets = current_user.bets.for_round(@rodada.id).ordered.to_a
+  def valid_bet_submission?
+    @palpites_form.present? &&
+      @palpites_form.size == @rodada.jogos.size &&
+      Palpite.validate_bet_choices(@palpites_form.values)
   end
 
-  def validate_bets
-    @bet_data = params.require(:bets).to_unsafe_h
-
-    unless @bet_data.present? &&
-           @bet_data.size == @rodada.games.size &&
-           Bet.valid_choices?(@bet_data.values)
-      flash[:alert] = "Palpites inválidos. Verifique suas escolhas."
-      flash[:form_data] = @bet_data
-      redirect_back fallback_location: root_path
-    end
-  end
-
-  def set_view_user
-    if @rodada.betting_closed? && params[:user_id].present?
-      @bolao.users.find(params[:user_id])
+  def handle_invalid_submission
+    if @palpites_form.size != @rodada.jogos.size
+      message = "Você deve preencher palpites para todos os #{@rodada.jogos.size} jogos."
     else
-      current_user
+      message = "Limite excedido: máximo 10 vitórias, 10 empates ou 10 derrotas."
     end
-  end
-
-  def handle_flash_messages
-    if @errors.empty?
-      flash[:notice] = "Palpites salvos com sucesso!"
-    else
-      flash[:alert] = "Erros encontrados: #{@errors.map { |e| "Jogo #{e[:game]}: #{e[:error]}" }.join('; ')}"
-    end
-  end
-
-  def redirect_after_save
-    if @errors.empty?
-      redirect_to bolao_rodada_path(@bolao, @rodada)
-    else
-      flash[:form_data] = params[:bets].to_unsafe_h
-      redirect_to new_bolao_rodada_palpites_path(@bolao, @rodada)
-    end
+    flash[:error] = message
+    flash[:data] = @palpites_form
+    redirect_to request.referer || bolao_rodada_palpites_path(@bolao, @rodada)
   end
 end

@@ -8,4 +8,3 @@ pin_all_from "app/javascript/controllers", under: "controllers"
 pin "bootstrap" # Pin Bootstrap JavaScript
 pin "bootstrap-icons" # Pin Bootstrap Icons
 pin "bootstrap", to: "bootstrap.bundle.min.js"
-

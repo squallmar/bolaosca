@@ -1,32 +1,40 @@
 <%= form_with(model: [@bolao, @rodada, @jogo || @rodada.jogos.build], 
-             local: true, 
-             html: { class: 'form-horizontal' }) do |f| %>
-  <tr>
-    <td>
+             url: @jogo.persisted? ? 
+                  bolao_rodada_jogo_path(@bolao, @rodada, @jogo) : 
+                  bolao_rodada_jogos_path(@bolao, @rodada),
+             method: @jogo.persisted? ? :patch : :post,
+             local: true,
+             html: { class: 'w-full' }) do |f| %>
+  <div class="flex items-center space-x-4 p-3 bg-white rounded-lg shadow-sm">
+    <!-- Time da Casa -->
+    <div class="w-1/4">
       <%= f.select :time_home, Jogo::TIMES, 
                   { prompt: 'Time da Casa' }, 
-                  class: "form-control" %>
-    </td>
-    <td>
+                  class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" %>
+    </div>
+    
+    <!-- Placar -->
+    <div class="flex items-center space-x-2">
       <%= f.number_field :placar_home, 
-                        class: "form-control", 
-                        style: "width: 60px",
+                        class: "w-16 px-3 py-2 border border-gray-300 rounded-md text-center shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 #{'bg-gray-100' unless @rodada.apostas_encerradas?}", 
                         readonly: !@rodada.apostas_encerradas? %>
-    </td>
-    <td><b>x</b></td>
-    <td>
+      <span class="font-bold text-gray-700">x</span>
       <%= f.number_field :placar_away, 
-                        class: "form-control", 
-                        style: "width: 60px",
+                        class: "w-16 px-3 py-2 border border-gray-300 rounded-md text-center shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 #{'bg-gray-100' unless @rodada.apostas_encerradas?}", 
                         readonly: !@rodada.apostas_encerradas? %>
-    </td>
-    <td>
+    </div>
+    
+    <!-- Time Visitante -->
+    <div class="w-1/4">
       <%= f.select :time_away, Jogo::TIMES, 
                   { prompt: 'Time Visitante' }, 
-                  class: "form-control" %>
-    </td>
-    <td>
-      <%= f.submit '+ Jogo', class: 'btn btn-primary pull-right' %>
-    </td>
-  </tr>
+                  class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" %>
+    </div>
+    
+    <!-- Botão Submit -->
+    <div>
+      <%= f.submit @jogo.persisted? ? 'Atualizar Jogo' : '+ Jogo', 
+                  class: 'px-4 py-2 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500' %>
+    </div>
+  </div>
 <% end %>

@@ -1,0 +1,15 @@
+<%# app/views/user_mailer/boas_vindas.text.erb %>
+Bem-vindo(a), <%= @user.nome %>!
+
+Sua conta no <%= Rails.application.config.site_name %> foi ativada com sucesso.
+
+<% if @user.bolaos.any? %>
+Você está participando dos bolões:
+<% @user.bolaos.each do |bolao| %>
+- <%= bolao.titulo %>: <%= bolao_url(bolao) %>
+<% end %>
+<% else %>
+Acesse nossa página de bolões para começar: <%= bolaos_url %>
+<% end %>
+
+Acesse sua conta: <%= root_url %>

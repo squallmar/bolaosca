@@ -1,7 +1,64 @@
-<div class="navbar navbar-inner sub-navbar">
-  <ul class="nav">
-    <%= content_tag :li, (link_to 'HOME' , root_url, :class=>"icon-home") %>
-    <%= content_tag :li, link_to(' TABELA DO BRASILEIRÃO',tabela_path, :class=>"icon-table"), :class => action?('tabela') ? ' active' : '' %>
-    <%= content_tag :li, link_to(' NOTÍCIAS DO BRASILEIRÃO',noticiasge_path, :class=>"icon-bullhorn"), :class => action?('noticiasge') ? ' active' : '' %>
-  </ul>
-</div>
+<nav class="bg-gray-800 shadow-lg">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="flex justify-between">
+      <div class="flex space-x-4 w-full">
+        <!-- Menu principal -->
+        <div class="hidden md:flex items-center space-x-1 w-full">
+          <%= link_to root_url, class: "flex items-center py-4 px-3 text-white hover:bg-gray-700 rounded transition duration-300 #{'bg-gray-700 font-bold' if controller_name == 'home' && action_name == 'index'}" do %>
+            <span class="mr-2">🏠</span>
+            <span>HOME</span>
+          <% end %>
+
+          <%= link_to tabela_path, class: "flex items-center py-4 px-3 text-white hover:bg-gray-700 rounded transition duration-300 #{'bg-gray-700 font-bold' if current_page?(tabela_path)}" do %>
+            <span class="mr-2">📊</span>
+            <span>TABELA DO BRASILEIRÃO</span>
+          <% end %>
+
+          <%= link_to noticiasge_path, class: "flex items-center py-4 px-3 text-white hover:bg-gray-700 rounded transition duration-300 #{'bg-gray-700 font-bold' if current_page?(noticiasge_path)}" do %>
+            <span class="mr-2">📢</span>
+            <span>NOTÍCIAS DO BRASILEIRÃO</span>
+          <% end %>
+        </div>
+
+        <!-- Botão mobile (hamburger) -->
+        <div class="md:hidden flex items-center">
+          <button class="mobile-menu-button p-2 focus:outline-none">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu mobile -->
+  <div class="mobile-menu hidden md:hidden bg-gray-800">
+    <%= link_to root_url, class: "block py-3 px-4 text-white hover:bg-gray-700 #{'bg-gray-700 font-bold' if controller_name == 'home' && action_name == 'index'}" do %>
+      <span class="mr-2">🏠</span>
+      <span>HOME</span>
+    <% end %>
+
+    <%= link_to tabela_path, class: "block py-3 px-4 text-white hover:bg-gray-700 #{'bg-gray-700 font-bold' if current_page?(tabela_path)}" do %>
+      <span class="mr-2">📊</span>
+      <span>TABELA DO BRASILEIRÃO</span>
+    <% end %>
+
+    <%= link_to noticiasge_path, class: "block py-3 px-4 text-white hover:bg-gray-700 #{'bg-gray-700 font-bold' if current_page?(noticiasge_path)}" do %>
+      <span class="mr-2">📢</span>
+      <span>NOTÍCIAS DO BRASILEIRÃO</span>
+    <% end %>
+  </div>
+</nav>
+
+<script>
+  // Script para o menu mobile
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.querySelector('.mobile-menu-button');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    
+    mobileMenuButton.addEventListener('click', function() {
+      mobileMenu.classList.toggle('hidden');
+    });
+  });
+</script>

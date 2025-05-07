@@ -1,27 +1,33 @@
-<div class="separator"></div>
+<div class="space-y-4">
+  <ul class="space-y-1">
+    <!-- Bolão Atual (se presente) -->
+    <% if @bolao_atual %>
+      <li class="relative group">
+        <%= link_to @bolao_atual.titulo.upcase.split(' ')[0,2].join(' '), @bolao_atual, 
+                    class: "block px-4 py-2 text-lg font-semibold text-blue-600 hover:bg-gray-100 transition-colors duration-150" %>
+        <ul class="absolute left-0 hidden mt-2 space-y-2 bg-white border border-gray-200 rounded shadow-lg group-hover:block">
+          <li><%= link_to 'ÚLTIMA RODADA', [@bolao_atual, @rodada_atual], class: "block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 transition-colors duration-150" %></li>
+          <li><%= link_to 'RODADAS', bolao_rodadas_path(@bolao_atual), class: "block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 transition-colors duration-150" %></li>
+          <li><%= link_to 'CRIAR NOVA RODADA', new_bolao_rodada_path(@bolao_atual), class: "block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 transition-colors duration-150" %></li>
+          <li><%= link_to 'PARTICIPANTES', bolao_users_path(@bolao_atual), class: "block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 transition-colors duration-150" %></li>
+          <li><%= link_to 'ADICIONAR PARTICIPANTES', new_user_invitation_path(id: @bolao_atual), class: "block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 transition-colors duration-150" %></li>
+        </ul>
+      </li>
+    <% else %>
+      <li><%= link_to 'NOVO BOLÃO', new_bolao_path, 
+                      class: "block px-4 py-2 text-lg font-semibold text-blue-600 hover:bg-gray-100 transition-colors duration-150" %></li>
+    <% end %>
 
-<% unless @bolao_atual.nil? %>
-  <li style=" min-width: 150px !important; ">
-    <%= link_to @bolao_atual.titulo.upcase.split(' ')[0,2].join(' '), @bolao_atual %>
-    <ul>
-      <%= content_tag(:li, (link_to 'ÚLTIMA RODADA' , [@bolao_atual, @rodada_atual])) %>
-      <%= content_tag(:li, (link_to 'RODADAS' , bolao_rodadas_path(@bolao_atual))) %>
-      <%= content_tag(:li, (link_to 'CRIAR NOVA RODADA' , new_bolao_rodada_path(@bolao_atual))) %>
-      <%= content_tag(:li, (link_to 'PARTICIPANTES' , bolao_users_path(@bolao_atual))) %>
-      <%= content_tag(:li, (link_to 'ADICIONAR PARTICIPANTES', new_user_invitation_path(id:@bolao_atual))) %>
-    </ul>
-  </li>
-<% else -%>
-  <%= content_tag(:li, (link_to 'NOVO BOLÃO' ,new_bolao_path)) %>
-<% end -%>
-
-<li>
-  <a href='#'>GERENCIAMENTO</a>
-  <ul>
-    <%= content_tag(:li, (link_to 'BOLÕES' , bolaos_path)) %>
-    <%= content_tag(:li, (link_to 'USUÁRIOS' , users_path)) %>
-    <%= content_tag(:li, (link_to 'POSTAGENS - BLOG' , posts_path)) %>
-    <%= content_tag(:li, (link_to 'ÁLBUNS - FOTOS' , albums_path)) %>
-    <%= content_tag(:li, (link_to 'BANNERS - PUBLICIDADE' , banners_path)) %>
+    <!-- Gerenciamento -->
+    <li class="relative group">
+      <span class="block px-4 py-2 text-lg font-semibold text-gray-800 hover:bg-gray-100 transition-colors duration-150">GERENCIAMENTO</span>
+      <ul class="absolute left-0 hidden mt-2 space-y-2 bg-white border border-gray-200 rounded shadow-lg group-hover:block">
+        <li><%= link_to 'BOLÕES', bolaos_path, class: "block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 transition-colors duration-150" %></li>
+        <li><%= link_to 'USUÁRIOS', users_path, class: "block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 transition-colors duration-150" %></li>
+        <li><%= link_to 'POSTAGENS - BLOG', posts_path, class: "block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 transition-colors duration-150" %></li>
+        <li><%= link_to 'ÁLBUNS - FOTOS', albums_path, class: "block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 transition-colors duration-150" %></li>
+        <li><%= link_to 'BANNERS - PUBLICIDADE', banners_path, class: "block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 transition-colors duration-150" %></li>
+      </ul>
+    </li>
   </ul>
-</li>
+</div>

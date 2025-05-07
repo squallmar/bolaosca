@@ -1,6 +1,8 @@
 # encoding: utf-8
 
 class Rodada < ActiveRecord::Base
+  extend FriendlyId
+  friendly_id :numero, use: :slugged
   belongs_to :user
   belongs_to :bolao
   has_many :jogos, dependent: :delete_all

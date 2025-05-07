@@ -1,78 +1,142 @@
-<%= content_tag :p, (@bolao == @bolao_atual ? 'Bolão Atual - ' : '') + @bolao.titulo, :class => "label label-success" %>
-<!-- <div class="page-header"> -->
-<div>
-  <h3>Aposta de <%= @palpites.first.user.apelido || @palpites.first.user.nome %></h1>
-  <p>RODADA <%= @rodada.numero %></p>
-</div>
-<div id="legenda" >
-  <dl id="checks",  data-intro="A caixinha com um visto mostra em qual time você apostou que irá vencer, a caixinha vazia, mostra em qual time você apostou que irá perder e a caixinha preenchida mostra que você apostou no empate. ">
-    <dt><i class="icon-check"></i></dt><dd>Vitória</dd>
-    <dt><i class="icon-check-empty"></i></dt><dd>Derrota</dd>
-    <dt><i class="icon-sign-blank"></i></dt><dd>Empate</dd>
-  </dl>
-  <% unless @jogos.first.placar_home.nil? %>
-    <dl id="colors", data-intro="O palpite na cor vermelha mostra o campo correto do resultado  da rodada no qual você errou, e na cor verde mostra o campo correto que você acertou. ">
-      <dt><i style="background:#FF8B8B"></i></dt><dd> Gabarito</dd>
-      <dt><i style="background:#5ED85E"></i></dt><dd> Palpite Acertado!</dd>
-    </dl>
-  <% end -%>
-</div>
+<div class="container mx-auto px-4 py-8">
+  <!-- Cabeçalho -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+        <%= @bolao.titulo %>
+      </span>
+      <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium ml-2">
+        Rodada <%= @rodada.numero %>
+      </span>
+    </div>
+    
+    <h2 class="text-2xl font-bold text-gray-800">
+      Aposta de <%= @palpites.first&.user&.apelido || @palpites.first&.user&.nome || "Usuário" %>
+    </h2>
+  </div>
 
-<h4> Palpites: </h4>
+  <!-- Legenda -->
+  <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+    <h3 class="text-lg font-semibold mb-3">Legenda</h3>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <h4 class="font-medium mb-2">Ícones</h4>
+        <div class="flex items-center space-x-2 mb-2">
+          <i class="fas fa-check text-green-500"></i>
+          <span>Vitória</span>
+        </div>
+        <div class="flex items-center space-x-2 mb-2">
+          <i class="far fa-circle text-red-500"></i>
+          <span>Derrota</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-square text-gray-500"></i>
+          <span>Empate</span>
+        </div>
+      </div>
+      
+      <% if @jogos.any? { |j| j.placar_home.present? && j.placar_away.present? } %>
+        <div>
+          <h4 class="font-medium mb-2">Cores</h4>
+          <div class="flex items-center space-x-2 mb-2">
+            <div class="w-4 h-4 bg-red-300 rounded-sm"></div>
+            <span>Gabarito</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-4 h-4 bg-green-300 rounded-sm"></div>
+            <span>Palpite Acertado!</span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
 
-<table class="table table-striped tabela_rodada">
-  <thead>
-    <tr>
-      <th colspan=3>COLUNA I</th>
-      <th>Vs.</th>
-      <th colspan=3>COLUNA II</th>
-      <th>Pontuação</th>
-    </tr>
-    <tr class="mainth">
-      <th>Time Mandante</th>
-      <th>PALPITES</th>
-      <th colspan=3>Placar da rodada</th>
-      <th>PALPITES</th>
-      <th>Time Visitante</th>
-      <th>PTS</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% if @rodada.apostas_encerradas? and !(@jogos.map(&:placar_away).include?(nil) or @jogos.map(&:placar_away).include?(nil)) %>
-      <% @jogos.each_with_index do |jogo,i| -%>
-        <% palpite = @palpites[i] %>
-        <% dados_do_jogo = get_data(palpite.home,palpite.away,jogo.placar_home,jogo.placar_away) %>
-        <tr class="color-<%=dados_do_jogo[:cor_aux]%>">
-          <td style="background-color: <%#=dados_do_jogo[:cor_1]%>"><%= jogo.time_home %></td>
-          <td style="background-color: <%=dados_do_jogo[:cor_1]%>"><%= content_tag :i,'' , :class => dados_do_jogo[:icone_home] %></td>
-          <td><%= jogo.placar_home %></td>
-          <td style="background-color: <%=dados_do_jogo[:cor_3]%>"><b>x</b></td>
-          <td><%= jogo.placar_away %></td>
-          <td style="background-color: <%=dados_do_jogo[:cor_2]%>"><%= content_tag :i,'', :class => dados_do_jogo[:icone_away] %></td>
-          <td style="background-color: <%#=dados_do_jogo[:cor_2]%>"><%= jogo.time_away %></td>
-          <td><p class="label badge <%= dados_do_jogo[:ponto] == 0 ? 'label-warning' : 'label-success' %>">+<%= dados_do_jogo[:ponto] %></p></td>
-        </tr>
-      <% end -%>
-    <% else -%>
-      <% @jogos.each_with_index do |jogo,i| -%>
+  <!-- Tabela de Palpites -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
         <tr>
-          <% palpite = @palpites[i] %>
-          <% dados_do_jogo = get_data_sem_resultado(palpite.home,palpite.away) %>
-          <td><%= jogo.time_home %></td>
-          <td><%= content_tag :i,'' , :class => dados_do_jogo[:icone_home] %></td>
-          <td><%= "SEM PLACAR" %></td>
-          <td><b>x</b></td>
-          <td><%= "SEM PLACAR" %></td>
-          <td><%= content_tag :i,'', :class => dados_do_jogo[:icone_away] %> </td>
-          <td><%= jogo.time_away %></td>
-          <td><p class="label badge label-info">?</p></td>
+          <th colspan="3" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">COLUNA I</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vs.</th>
+          <th colspan="3" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">COLUNA II</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PTS</th>
         </tr>
-      <% end -%>
-    <% end -%>
-    <tr>
-      <td colspan=7></td>
-      <td><div class="label badge label-success icon-2x"><%= @pontuacao %></div></td>
-    </tr>
-  </tbody>
-</table>
-<%= link_to ' Editar Palpites', edit_bolao_rodada_palpites_path(@bolao, @rodada), :style => 'display:block', :class=> "btn icon-edit icon-2x icon-white btn-primary" if @rodada.apostas_abertas?  %>
+        <tr class="bg-gray-100">
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time Mandante</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PALPITES</th>
+          <th colspan="3" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Placar da rodada</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PALPITES</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time Visitante</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% if @rodada.apostas_encerradas? && @jogos.all? { |j| j.placar_home.present? && j.placar_away.present? } %>
+          <% @jogos.each_with_index do |jogo, i| %>
+            <% palpite = @palpites[i] %>
+            <% if palpite %>
+              <% dados_do_jogo = get_data(palpite.home, palpite.away, jogo.placar_home, jogo.placar_away) %>
+              <tr class="bg-<%= dados_do_jogo[:cor_aux] %>-50">
+                <td class="px-6 py-4 whitespace-nowrap"><%= jogo.time_home %></td>
+                <td class="px-6 py-4 whitespace-nowrap bg-<%= dados_do_jogo[:cor_1] %>-100">
+                  <i class="<%= dados_do_jogo[:icone_home] %>"></i>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap"><%= jogo.placar_home %></td>
+                <td class="px-6 py-4 whitespace-nowrap font-bold bg-<%= dados_do_jogo[:cor_3] %>-100">x</td>
+                <td class="px-6 py-4 whitespace-nowrap"><%= jogo.placar_away %></td>
+                <td class="px-6 py-4 whitespace-nowrap bg-<%= dados_do_jogo[:cor_2] %>-100">
+                  <i class="<%= dados_do_jogo[:icone_away] %>"></i>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap"><%= jogo.time_away %></td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 py-1 rounded-full text-xs font-medium <%= dados_do_jogo[:ponto] == 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' %>">
+                    +<%= dados_do_jogo[:ponto] %>
+                  </span>
+                </td>
+              </tr>
+            <% end %>
+          <% end %>
+        <% else %>
+          <% @jogos.each_with_index do |jogo, i| %>
+            <% palpite = @palpites[i] %>
+            <% if palpite %>
+              <% dados_do_jogo = get_data_sem_resultado(palpite.home || 0, palpite.away || 0) %>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap"><%= jogo.time_home %></td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <i class="<%= dados_do_jogo[:icone_home] %>"></i>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap"><%= jogo.placar_home || "SEM PLACAR" %></td>
+                <td class="px-6 py-4 whitespace-nowrap font-bold">x</td>
+                <td class="px-6 py-4 whitespace-nowrap"><%= jogo.placar_away || "SEM PLACAR" %></td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <i class="<%= dados_do_jogo[:icone_away] %>"></i>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap"><%= jogo.time_away %></td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">?</span>
+                </td>
+              </tr>
+            <% end %>
+          <% end %>
+        <% end %>
+        <tr>
+          <td colspan="7" class="px-6 py-4 text-right font-medium">Total:</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+              <%= @pontuacao || 0 %>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <% if @rodada.apostas_abertas? %>
+    <div class="mt-6">
+      <%= link_to edit_bolao_rodada_palpites_path(@bolao, @rodada), class: "inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:border-blue-900 focus:ring focus:ring-blue-300 disabled:opacity-25 transition" do %>
+        <i class="fas fa-edit mr-2"></i> Editar Palpites
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -3,7 +3,6 @@ class JogosController < ApplicationController
   before_action :get_bolao_and_rodada
   before_action :authorize_admin, except: [ :index, :show ]
 
-  # Ações públicas
   def index
     @jogos = @rodada.jogos.order(:created_at)
   end
@@ -14,13 +13,12 @@ class JogosController < ApplicationController
 
   def create
     @jogo = @rodada.jogos.build(jogo_params)
-    @jogo.user = current_user
+    @jogo.user = current_user  #-------- associar o usuário ao jogo!
 
     if @jogo.save
-      redirect_to bolao_rodada_path(@bolao, @rodada),
-                  notice: "Jogo adicionado com sucesso!"
+      redirect_to bolao_rodada_path(@bolao, @rodada), notice: "Jogo criado com sucesso."
     else
-      flash[:alert] = "Erro: #{@jogo.errors.full_messages.join(', ')}"
+      flash[:error] = "Erro ao criar jogo: #{@jogo.errors.full_messages.join(', ')}"
       redirect_to bolao_rodada_path(@bolao, @rodada)
     end
   end
@@ -29,11 +27,10 @@ class JogosController < ApplicationController
     @jogo = @rodada.jogos.find(params[:id])
   end
 
-  # Nova ação para edição múltipla
   def edit_multiplos
     @jogos = @rodada.jogos.order(:created_at)
     if @jogos.empty?
-      redirect_to [ @bolao, @rodada ], alert: "Nenhum jogo cadastrado"
+      redirect_to [ @bolao, @rodada ], alert: "Nenhum jogo cadastrado para edição"
     end
   end
 
@@ -49,35 +46,27 @@ class JogosController < ApplicationController
     end
   end
 
-  # Nova ação para atualização múltipla
   def update_multiplos
+    @jogos = @rodada.jogos.order(:created_at)
     success_count = 0
     error_messages = []
 
-    @rodada.jogos.each_with_index do |jogo, index|
-      jogo_attrs = {
-        time_home: params.dig(:jogos, :time_homes, index),
-        time_away: params.dig(:jogos, :time_aways, index),
-        placar_home: params.dig(:jogos, :placar_homes, index),
-        placar_away: params.dig(:jogos, :placar_aways, index)
-      }
-
-      if jogo.update(jogo_attrs)
+    params[:jogos].each do |id, jogo_params|
+      jogo = @jogos.find(id)
+      if jogo.update(jogo_params.permit(:time_home, :time_away, :placar_home, :placar_away))
         success_count += 1
       else
-        error_messages << "Jogo #{index + 1}: #{jogo.errors.full_messages.join(', ')}"
-      end
-    end
-
-    if @rodada.apostas_encerradas? && error_messages.empty?
-      @rodada.calcular_pontuacao(params[:check_email])
-      if params[:check_email]
-        flash[:notice] = "#{@bolao.users.com_notificacoes_pontuacao.size} participantes notificados."
+        error_messages << "Jogo #{jogo.id}: #{jogo.errors.full_messages.join(', ')}"
       end
     end
 
     if error_messages.empty?
-      flash[:success] = "Todos os jogos foram atualizados com sucesso!"
+      flash[:notice] = "Todos os jogos foram atualizados com sucesso!"
+      if @rodada.apostas_encerradas?
+        @rodada.calcular_pontuacao(params[:check_email])
+        flash[:notice] += " Pontuações recalculadas."
+        flash[:notice] += " #{@bolao.users.com_notificacoes_pontuacao.size} participantes notificados." if params[:check_email]
+      end
     elsif success_count > 0
       flash[:warning] = "#{success_count} jogos atualizados. Erros: #{error_messages.join('; ')}"
     else
@@ -117,6 +106,6 @@ class JogosController < ApplicationController
   end
 
   def jogo_params
-    params.require(:jogo).permit(:placar_home, :placar_away, :time_home, :time_away)
+    params.require(:jogo).permit(:time_home, :time_away, :placar_home, :placar_away)
   end
 end

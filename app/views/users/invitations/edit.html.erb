@@ -1,40 +1,66 @@
-<h2><%= t 'devise.invitations.edit.header' %></h2>
+<h2 class="text-2xl font-bold mb-6"><%= t 'devise.invitations.edit.header' %></h2>
 
-<%= form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => { :method => :put } do |f| %>
-  <%#= devise_error_messages! %>
+<%= form_for resource, as: resource_name, 
+             url: invitation_path(resource_name), 
+             html: { method: :put, class: "space-y-4" } do |f| %>
   <%= f.hidden_field :invitation_token %>
 
-  <p><%= f.label :password %><br />
-  <%= f.password_field :password %></p>
-
-  <p><%= f.label :password_confirmation %><br />
-  <%= f.password_field :password_confirmation %></p>
-
-  <hr>
-
-  <div>
-    <%= f.label :apelido %><br />
-    <%= f.text_field :apelido %>
-    <%= error_tag resource, :apelido %>
+  <!-- Senha -->
+  <div class="field">
+    <%= f.label :password, class: "block text-sm font-medium text-gray-700" %>
+    <%= f.password_field :password, 
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+          required: true %>
+    <%= error_tag resource, :password %>
   </div>
 
-  <div>
-    <%= f.label :nome %><br />
-    <%= f.text_field :nome, :class=>'grande' %>
-    <%= error_tag resource, :nome %>
+  <!-- Confirmação de Senha -->
+  <div class="field">
+    <%= f.label :password_confirmation, class: "block text-sm font-medium text-gray-700" %>
+    <%= f.password_field :password_confirmation, 
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+          required: true %>
+    <%= error_tag resource, :password_confirmation %>
   </div>
 
-  <div>
-    <%= f.label :telefone %><br />
-    <%= f.text_field :telefone %>
-    <%= error_tag resource, :telefone %>
+  <hr class="my-6">
+
+  <!-- Campos Personalizados -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="field">
+      <%= f.label :apelido, class: "block text-sm font-medium text-gray-700" %>
+      <%= f.text_field :apelido, 
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+            required: true %>
+      <%= error_tag resource, :apelido %>
+    </div>
+
+    <div class="field">
+      <%= f.label :nome, class: "block text-sm font-medium text-gray-700" %>
+      <%= f.text_field :nome, 
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 grande",
+            required: true %>
+      <%= error_tag resource, :nome %>
+    </div>
+
+    <div class="field">
+      <%= f.label :telefone, "Telefone (com DDD)", class: "block text-sm font-medium text-gray-700" %>
+      <%= f.text_field :telefone, 
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+            placeholder: "(99) 99999-9999" %>
+      <%= error_tag resource, :telefone %>
+    </div>
+
+    <div class="field">
+      <%= f.label :setor, class: "block text-sm font-medium text-gray-700" %>
+      <%= f.text_field :setor, 
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      <%= error_tag resource, :setor %>
+    </div>
   </div>
 
-  <div>
-    <%= f.label :setor %><br />
-    <%= f.text_field :setor %>
-    <%= error_tag resource, :setor %>
+  <div class="mt-6">
+    <%= f.submit t("devise.invitations.edit.submit_button"), 
+          class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
   </div>
-
-  <p><%= f.submit t("devise.invitations.edit.submit_button"), :class => "btn btn-primary"%></p>
 <% end %>

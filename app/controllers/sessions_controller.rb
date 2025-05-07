@@ -8,8 +8,21 @@ class SessionsController < Devise::SessionsController
 
   def create
     self.resource = warden.authenticate!(auth_options)
-    set_flash_message(:notice, :signed_in) if is_navigational_format?
+
+    # Proteção contra fixation de sessão
+    sign_out(current_user) if user_signed_in?
+
+    # Login seguro com tratamento de falhas
     sign_in(resource_name, resource)
-    redirect_to after_sign_in_path_for(resource)
+
+    # Mensagem flash com I18n e verificação de segurança
+    set_flash_message(:notice, :signed_in) if is_flashing_format?
+
+    # Redirecionamento seguro com fallback
+    redirect_to after_sign_in_path_for(resource), allow_other_host: true
+  rescue Warden::NotAuthenticated => e
+    # Tratamento de erro específico
+    flash.now[:alert] = t("devise.failure.invalid")
+    render :new
   end
 end

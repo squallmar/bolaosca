@@ -10,7 +10,7 @@ gem "sqlite3", ">= 1.4"
 gem "puma", ">= 6.0"
 
 # Sistema de assets (escolha UM dos dois abaixo)
-gem "propshaft" # Opção moderna recomendada
+gem "propshaft"
 gem "rack-cors"
 
 
@@ -66,3 +66,7 @@ group :test do
 end
 
 gem "tailwindcss-rails", "~> 4.2"
+
+gem "fiddle"
+gem "feedjira", "~> 3.2", ">= 3.2.5"
+gem "httparty", "~> 0.23.1"

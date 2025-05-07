@@ -1,90 +1,143 @@
-<%= content_tag :p, (@bolao == bolao_atual ? 'Bolão Atual - ' : '') + @bolao.titulo, :class => "label label-success" %>
-<%- model_class = Rodada -%>
-<%= content_tag :p, 'Rodada Atual do Bolão', :class => "label label-success" if @rodada == rodada_atual(@bolao.id) %>
-<div class="page-header">
-   <%= content_tag :h3, "Rodada " + @rodada.numero, :class => "title"  %>
-<br>
-<i class="icon-2x icon-time badge" style="padding: 10px; background:rgba(0,0,0,.3)">   <%= situacao @rodada %></i>
-<br>
+<div class="mt-20 mb-4 p-3 bg-green-100 text-green-700 border border-green-400 rounded">
+  <p class="label label-success">
+    <%= (@bolao == bolao_atual ? 'Bolão Atual - ' : '') + @bolao.titulo %>
+  </p>
 </div>
-<br>
-<dl class="dl-horizontal" style=" float: left; width: 50% !important; ">
-  <dt><strong><%= model_class.human_attribute_name(:data_inicio_apostas) %>:</strong></dt>
-  <dd><%= @rodada.data_inicio_apostas.strftime("%d/%m/%y %H:%M, %A") %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:data_final_apostas) %>:</strong></dt>
-  <dd><%= @rodada.data_final_apostas.strftime("%d/%m/%y %H:%M, %A") %></dd>
+
+<% model_class = Rodada %>
+
+<% if @rodada == rodada_atual(@bolao.id) %>
+  <div class="mt-8 mb-4 p-3 bg-green-100 text-green-700 border border-green-400 rounded">
+    <p class="label label-success">Rodada Atual do Bolão</p>
+  </div>
+<% end %>
+
+<div class="mb-6">
+  <h3 class="page-header title text-2xl font-semibold text-gray-800">
+    Rodada <%= @rodada.numero %>
+  </h3>
+  <div class="inline-block bg-gray-700 text-white rounded px-2 py-1 text-sm font-medium">
+    <i class="icon-2x icon-time mr-1 align-middle"></i> <%= situacao(@rodada, current_user) %>
+  </div>
+</div>
+
+<dl class="dl-horizontal grid grid-cols-1 md:grid-cols-2 gap-x-4 mb-4">
+  <div>
+    <dt class="font-semibold text-gray-700">
+      <%= model_class.human_attribute_name(:data_inicio_apostas) %>:
+    </dt>
+    <dd class="text-gray-600">
+      <%= @rodada.data_inicio_apostas.strftime("%d/%m/%y %H:%M, %A") %>
+    </dd>
+  </div>
+  <div>
+    <dt class="font-semibold text-gray-700">
+      <%= model_class.human_attribute_name(:data_final_apostas) %>:
+    </dt>
+    <dd class="text-gray-600">
+      <%= @rodada.data_final_apostas.strftime("%d/%m/%y %H:%M, %A") %>
+    </dd>
+  </div>
 </dl>
 
-<%= render 'classificacao' if @rodada.apostas_encerradas? and @classificacao.present? %>
+<% if @rodada.apostas_encerradas? && @classificacao.present? %>
+  <%= render 'classificacao' %>
+<% end %>
 
 <% if admin? %>
-  <div style="clear:both">
-    <br>
+  <div class="mt-6 space-y-2">
     <%= link_to " Editar Rodada", edit_bolao_rodada_path(@bolao, @rodada),
-                :class => 'btn  icon-edit', :"data-intro" => "Você poderá editar o número da rodada, a data de início de apostas e data final de apostas." %> <br><br>
+                class: 'btn icon-edit inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
+                data: { intro: "Você poderá editar o número da rodada, a data de início de apostas e data final de apostas." } %>
+
     <%= link_to " Notificar participantes dos prazos de aposta", notificar_participantes_bolao_rodada_url,
-                :class => 'btn  icon-envelope', :"data-intro" => "Ao clicar, será enviado um email para todos os participantes com o prazo para realizarem apostas nessa rodada. " %>
-              <br><br>
-    <%= link_to " Apagar rodada",
-              bolao_rodada_path(@bolao,@rodada),
-              :method => 'delete',
-              :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
-              :class => 'btn btn-danger  icon-trash',  :"data-intro" => "A rodada só poderá ser apagada antes da data de início e de fim de apostas." %>
+                class: 'btn icon-envelope inline-block bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
+                data: { intro: "Ao clicar, será enviado um email para todos os participantes com o prazo para realizarem apostas nessa rodada." } %>
+
+    <%= link_to " Apagar rodada", bolao_rodada_path(@bolao, @rodada),
+                method: :delete,
+                data: { confirm: t('.confirm', default: t("helpers.links.confirm", default: 'Are you sure?')),
+                        intro: "A rodada só poderá ser apagada antes da data de início e de fim de apostas." },
+                class: 'btn btn-danger icon-trash inline-block bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' %>
   </div>
-<% end -%>
-<br>
-<hr style="clear: both">
-<%= link_to ' Escolher Palpites', apostando_bolao_rodada_palpites_path(@bolao, @rodada), :style => 'display:block', :class=> "btn icon-legal icon-2x icon-white btn-success" if @rodada.apostas_abertas?  %>
-<%= link_to ' Ver minhas apostas', bolao_rodada_palpites_path(@bolao, @rodada), :class=> "btn icon-beer icon-white btn-success pull-right" if user_signed_in? && !@rodada.apostas_abertas? and current_user.palpites.da_rodada(@rodada.id).present? %>
+<% end %>
 
+<hr class="my-6">
 
-<h5 class="title">Jogos:</h5>
+<div class="space-y-2">
+  <% if @rodada.apostas_abertas? %>
+    <%= link_to ' Escolher Palpites', apostando_bolao_rodada_palpites_path(@bolao, @rodada),
+                style: 'display:block',
+                class: "btn icon-legal icon-2x icon-white btn-success inline-block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+  <% elsif user_signed_in? && current_user.palpites.da_rodada(@rodada.id).present? %>
+    <%= link_to ' Ver minhas apostas', bolao_rodada_palpites_path(@bolao, @rodada),
+                class: "btn icon-beer icon-white btn-success float-right bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+  <% end %>
+</div>
 
-<% if @rodada.jogos.any? %>
-  <table class="table table-striped tabela_rodada">
-    <thead>
-      <tr>
-        <th>Time(CASA)</th>
-        <th>Placar(CASA)</th>
-        <th>Vs.</th>
-        <th>Placar(FORA)</th>
-        <th>Time(FORA)</th>
-        <% if admin? %>
-          <th><i class="icon-warning-sign"></i> Apagar</th>
-        <% end %>
-      </tr>
-    </thead>
-    <tbody>
-      <% @rodada.jogos.each do |jogo| %>
+<h5 class="title text-xl font-semibold text-gray-800 mt-6 mb-2">Jogos:</h5>
+
+<div class="flex justify-end mb-2">
+  <% unless @rodada.jogos.size <= 1 || @rodada.apostas_abertas? || !admin? %>
+    <%= link_to " Editar Jogos", edit_multiplos_bolao_rodada_jogos_path(@bolao, @rodada),
+                class: 'btn icon-list btn-primary inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
+                data: { intro: "Permite atualizar os placares dos jogos dessa rodada." } %>
+  <% end %>
+</div>
+
+<div class="overflow-x-auto">
+  <% if @rodada.jogos.any? %>
+    <table class="table table-striped tabela_rodada min-w-full bg-white shadow-md rounded-lg">
+      <thead class="bg-gray-50">
         <tr>
-          <td><%= jogo.time_home %></td>
-          <td><%= jogo.placar_home || "-" %></td>
-          <td><b>x</b></td>
-          <td><%= jogo.placar_away || "-" %></td>
-          <td><%= jogo.time_away %></td>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time (CASA)</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Placar (CASA)</th>
+          <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Vs.</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Placar (FORA)</th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time (FORA)</th>
           <% if admin? %>
-            <td>
-              <%= link_to '', [@bolao, @rodada, jogo], 
-                          method: :delete, 
-                          class: "btn icon-trash icon-white btn-danger" %>
-            </td>
+            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <i class="icon-warning-sign" data-intro="Os jogos só podem ser apagados antes da data de início das apostas. Se desejar apagar um jogo, edite a data e depois retorne à data certa."></i> Apagar
+            </th>
           <% end %>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
-<% else %>
-  <div class="alert alert-info">Nenhum jogo cadastrado para esta rodada.</div>
-<% end %>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% @rodada.jogos.each do |jogo| %>
+          <tr>
+            <td class="px-4 py-4 whitespace-nowrap"><%= jogo.time_home %></td>
+            <td class="px-4 py-4 whitespace-nowrap"><%= jogo.placar_home %></td>
+            <td class="px-4 py-4 whitespace-nowrap text-center"><b>x</b></td>
+            <td class="px-4 py-4 whitespace-nowrap"><%= jogo.placar_away %></td>
+            <td class="px-4 py-4 whitespace-nowrap"><%= jogo.time_away %></td>
+            <% if admin? %>
+              <td class="px-4 py-4 whitespace-nowrap text-right">
+                <%= link_to '', [@bolao, @rodada, jogo],
+                            method: :delete,
+                            class: "btn icon-trash icon-white btn-danger inline-block bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline text-xs",
+                            title: "Apagar Jogo" %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
 
-<% if admin? && !@rodada.rodada_trancada? %>
-  <h5>Adicionar Novo Jogo:</h5>
-  <%= render "/jogos/form" %>
-<% end %>
+        <% if admin? && !@rodada.rodada_trancada? %>
+          <% @jogo = @rodada.jogos.build %>
+          <tr>
+            <%= render "jogos/form_line", jogo: @jogo %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="alert alert-info bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative">
+      Nenhum jogo cadastrado para esta rodada.
+    </div>
+  <% end %>
+</div>
 
-
-
-<div class="form-actions">
-  <%= link_to t('.back', :default => t("helpers.links.back")),
-              bolao_rodadas_path(@bolao), :class => 'btn'  %>
+<div class="form-actions mt-6">
+  <%= link_to t('.back', default: t("helpers.links.back")),
+              bolao_rodadas_path(@bolao),
+              class: 'btn inline-block bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline' %>
 </div>

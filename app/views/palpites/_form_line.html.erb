@@ -1,17 +1,7 @@
-<!--   <%# binding.pry %>
 <tr>
-  <td><%#= f.text_field :time_home %> </td>
-  <td><%#= f.text_field :placar_home, :style=>"width:40px;", :readonly => @rodada.aberta? %></td>
+  <td><%= jogo.time_home %></td>
+  <td><%= text_field_tag "palpites[#{jogo.id}][home]", palpite.placar_home || '', style: "width:40px;", readonly: !@rodada.apostas_encerradas? %></td>
   <td><b>x</b></td>
-  <td><%#= f.text_field :placar_away, :style=>"width:40px", :readonly => @rodada.aberta? %></td>
-  <td><%#= f.text_field :time_away %> </td>
-</tr> -->
-
-<% jogo = @rodada.jogos[:i] %>
-<tr>
-  <td><%= jogo.time_home %> </td>
-  <td><%= text_field_tag "palpites[homes][]", palpite.placar_home || '' , :style=>"width:40px;", :readonly => !@rodada.apostas_encerradas? %></td>
-  <td><b>x</b></td>
-  <td><%= text_field_tag "palpites[aways][]",palpite.placar_away || '' ,:style=>"width:40px", :readonly => !@rodada.apostas_encerradas? %></td>
-  <td><%= jogo.time_away %> </td>
+  <td><%= text_field_tag "palpites[#{jogo.id}][away]", palpite.placar_away || '', style: "width:40px", readonly: !@rodada.apostas_encerradas? %></td>
+  <td><%= jogo.time_away %></td>
 </tr>

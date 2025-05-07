@@ -1,22 +1,43 @@
-<div id="footer">
-  <p id="btn2topo" class="icon-arrow-up"></p>
-  <div class="links">
-    <%= link_to root_url, :class => 'escudo-btm' do %>
-    <% end -%>
-      <address>
-        <b>Responsáveis:</b><br>
-        Marco Antonio de Almeida Silva<br>
-        <!-- maas@petrobras.com.br -->
-      </address>
+<div id="footer" class="bg-gray-800 text-gray-300 py-8 px-4">
+  <div class="footer-container max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
+    
+    <!-- Seção do Logo e Responsáveis - Versão compacta -->
+    <div class="footer-section text-center md:text-left mb-6 md:mb-0">
+      <div class="flex flex-col items-center md:items-start space-y-2">
+        <%= link_to root_url, class: 'escudo-btm hover:opacity-80 transition-opacity duration-300' do %>
+          <%= image_tag("escudo_mini.png", class: "w-12 h-12 block", alt: "Logo do site") %>
+        <% end %>
 
-
-      <% mail_content = capture do %>
-         Densenvolvido por
-        <div id="all_ws">
-          <!-- <p>Tel: (22) 9915-  3354</p> -->
+        <div class="text-sm">
+          <p class="text-white font-medium">Bolão SCA</p>
+          <p class="text-gray-400">Comunidade de amigos</p>
         </div>
-      <% end %>
+      </div>
+    </div>
 
-      <%= mail_to 'marcelmendes05@gmail.com', mail_content,:target => "blank", :class => 'logo_all_ws' %>
+    <!-- Seção de Contato - Simplificada -->
+    <div class="footer-section text-center md:text-left space-y-2">
+      <div class="flex items-center justify-center md:justify-start space-x-2">
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+        </svg>
+        <%= mail_to 'marcelmendes05@gmail.com', 'Contato', class: "text-gray-400 hover:text-white transition-colors text-sm" %>
+      </div>
+      
+      <div class="pt-2">
+        <%= link_to 'https://github.com/squalldev', target: "_blank", class: "logo_squalldev flex flex-col items-center md:items-start hover:text-white transition-colors duration-300" do %>
+          <span class="text-xs text-gray-500 mb-1">Desenvolvido por</span>
+          <div class="flex items-center">
+            <%= image_tag("squalldev.png", alt: "SquallDev", class: "h-6 w-auto mr-2") %>
+            <span class="text-blue-400 text-sm font-medium">SquallDev</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rodapé inferior minimalista -->
+  <div class="text-center text-xs text-gray-500 mt-6 pt-4 border-t border-gray-700">
+    © <%= Time.current.year %> BolãoSCA - Todos os direitos reservados
   </div>
 </div>
