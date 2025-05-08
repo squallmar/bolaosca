@@ -8,13 +8,13 @@ class PalpitesController < ApplicationController
 
   def index
     @user = params[:user_id] ? User.find(params[:user_id]) : current_user
-    @palpites = @user.palpites.da_rodada(@rodada.id).to_a 
-    @jogos = @rodada.jogos.order(:id) 
+    @palpites = @user.palpites.da_rodada(@rodada.id).to_a
+    @jogos = @rodada.jogos.order(:id)
     @pontuacao = Pontuacao.na_rodada(@rodada.id).find_by(user_id: @user.id)&.pontos || 0
-  
+
     if @palpites.empty?
       flash[:warning] = "Nenhum palpite encontrado para esta rodada."
-      redirect_to [@bolao, @rodada]
+      redirect_to [ @bolao, @rodada ]
     end
   end
 

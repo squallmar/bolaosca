@@ -3,8 +3,8 @@
     <div class="flex justify-between items-center h-16">
 
       <!-- Botão Mobile -->
-      <button class="md:hidden p-2" data-action="click->navbar#toggle" aria-label="Menu" aria-expanded="false">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <button id="mobile-menu-button" class="md:hidden p-2" aria-label="Menu" aria-expanded="false">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
       </button>
@@ -12,7 +12,7 @@
       <!-- Logo -->
       <div class="flex-shrink-0">
         <%= link_to root_url, aria: { label: "Página inicial" } do %>
-        <%= image_tag("escudo_mini.png", class: "w-12 h-12 block", alt: "Logo do site") %>
+          <%= image_tag("escudo_mini.png", class: "w-12 h-12 block", alt: "Logo do site") %>
         <% end %>
       </div>
 
@@ -87,7 +87,7 @@
               <div class="w-8 h-8 rounded-full overflow-hidden bg-gray-200">
                 <%= image_tag(current_user.avatar? ? current_user.avatar.thumb.url : no_image_url) -%>
               </div>
-              <span class="text-sm font-medium">Perfil</span>
+              <span class="text-sm font-medium hidden md:inline">Perfil</span>
             </button>
             <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
               <%= render 'users/nav_dropmenu' %>
@@ -95,79 +95,99 @@
           </div>
         <% else %>
           <!-- Login e Solicitação de Cadastro -->
-          <%= link_to "Entrar", new_user_session_path, class: "px-3 py-2 text-sm font-medium hover:bg-gray-100 rounded-md" %>
+          <%= link_to "Entrar", new_user_session_path, class: "px-3 py-2 text-sm font-medium hover:bg-gray-100 rounded-md hidden md:inline" %>
           <%= link_to "Solicitar Cadastro", new_contato_path(request: true), class: "px-3 py-2 text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 rounded-md" %>
         <% end %>
       </div>
+    </div>
+  </div>
 
-      <!-- Menu Mobile -->
-      <div class="md:hidden absolute top-16 left-0 right-0 bg-white shadow-md z-40 hidden" id="mobile-menu">
-        <ul class="py-2">
+  <!-- Menu Mobile -->
+  <div class="md:hidden hidden bg-white shadow-md z-40" id="mobile-menu">
+    <div class="container mx-auto px-4">
+      <ul class="py-2">
+        <li>
+          <%= link_to root_url, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" do %>
+            <span class="mr-1" aria-hidden="true">🏠</span> Início
+          <% end %>
+        </li>
+
+        <% if @bolao_atual %>
           <li>
-            <%= link_to root_url, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" do %>
-              <span class="mr-1" aria-hidden="true">🏠</span> Início
+            <%= link_to @bolao_atual, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" do %>
+              <span class="mr-1" aria-hidden="true">🏆</span> <%= @bolao_atual.titulo.upcase.split(' ')[0,2].join(' ') %>
             <% end %>
           </li>
-
-          <% if @bolao_atual %>
-            <li>
-              <%= link_to @bolao_atual, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" do %>
-                <span class="mr-1" aria-hidden="true">🏆</span> <%= @bolao_atual.titulo.upcase.split(' ')[0,2].join(' ') %>
-              <% end %>
-            </li>
-            <li>
-              <%= link_to 'Última Rodada', [@bolao_atual, @rodada_atual], class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100 pl-8" %>
-            </li>
-            <li>
-              <%= link_to 'Rodadas', bolao_rodadas_path(@bolao_atual), class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100 pl-8" %>
-            </li>
-            <li>
-              <%= link_to 'Todos Bolões', bolaos_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100 pl-8" %>
-            </li>
-          <% else %>
-            <li>
-              <%= link_to 'Todos Bolões', bolaos_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" %>
-            </li>
-          <% end %>
-
           <li>
-            <%= link_to 'Blog', posts_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" %>
+            <%= link_to 'Última Rodada', [@bolao_atual, @rodada_atual], class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100 pl-8" %>
           </li>
           <li>
-            <%= link_to 'Fotos', albums_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" %>
+            <%= link_to 'Rodadas', bolao_rodadas_path(@bolao_atual), class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100 pl-8" %>
           </li>
-
-          <% if user_signed_in? %>
-            <li>
-              <%= link_to 'Regulamento', "/regulamentoSCA.pdf", target: "_blank", class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" %>
-            </li>
-            <li>
-              <%= link_to 'Contato', new_contato_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" %>
-            </li>
-          <% end %>
-
-          <% if user_signed_in? %>
-            <% if admin? %>
-              <li class="border-t border-gray-200">
-                <%= render 'users/admin_menu_mobile' %>
-              </li>
+          <li>
+            <%= link_to 'Todos Bolões', bolaos_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100 pl-8" %>
+          </li>
+        <% else %>
+          <li>
+            <%= link_to bolaos_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" do %>
+              <span class="mr-1" aria-hidden="true">🏆</span> Todos Bolões
             <% end %>
+          </li>
+        <% end %>
+
+        <li>
+          <%= link_to posts_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" do %>
+            <span class="mr-1" aria-hidden="true">💻</span> Blog
+          <% end %>
+        </li>
+        <li>
+          <%= link_to albums_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" do %>
+            <span class="mr-1" aria-hidden="true">📷</span> Fotos
+          <% end %>
+        </li>
+
+        <% if user_signed_in? %>
+          <li>
+            <%= link_to "/regulamentoSCA.pdf", target: "_blank", class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" do %>
+              <span class="mr-1" aria-hidden="true">📖</span> Regulamento
+            <% end %>
+          </li>
+          <li>
+            <%= link_to new_contato_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" do %>
+              <span class="mr-1" aria-hidden="true">✉️</span> Contato
+            <% end %>
+          </li>
+        <% end %>
+
+        <% if user_signed_in? %>
+          <% if admin? %>
             <li class="border-t border-gray-200">
-              <%= link_to 'Perfil', users_show_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" %>
-            </li>
-            <li>
-              <%= button_to 'Sair', destroy_user_session_path, method: :delete, class: "w-full text-left block px-4 py-2 text-sm font-medium hover:bg-gray-100 text-red-600" %>
-            </li>
-          <% else %>
-            <li class="border-t border-gray-200">
-              <%= link_to 'Entrar', new_user_session_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" %>
-            </li>
-            <li>
-              <%= link_to 'Solicitar Cadastro', new_contato_path(request: true), class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" %>
+              <%= render 'users/admin_menu_mobile' %>
             </li>
           <% end %>
-        </ul>
-      </div>
+          <li class="border-t border-gray-200">
+            <%= link_to users_show_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" do %>
+              <span class="mr-1" aria-hidden="true">👤</span> Perfil
+            <% end %>
+          </li>
+          <li>
+            <%= button_to destroy_user_session_path, method: :delete, class: "w-full text-left block px-4 py-2 text-sm font-medium hover:bg-gray-100 text-red-600" do %>
+              <span class="mr-1" aria-hidden="true">🚪</span> Sair
+            <% end %>
+          </li>
+        <% else %>
+          <li class="border-t border-gray-200">
+            <%= link_to new_user_session_path, class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" do %>
+              <span class="mr-1" aria-hidden="true">🔑</span> Entrar
+            <% end %>
+          </li>
+          <li>
+            <%= link_to new_contato_path(request: true), class: "block px-4 py-2 text-sm font-medium hover:bg-gray-100" do %>
+              <span class="mr-1" aria-hidden="true">📝</span> Solicitar Cadastro
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
     </div>
   </div>
 </div>
@@ -181,13 +201,31 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuButton = document.querySelector('[data-action="click->navbar#toggle"]');
+    // Menu Mobile
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
 
     if (mobileMenuButton && mobileMenu) {
       mobileMenuButton.addEventListener('click', function() {
         mobileMenu.classList.toggle('hidden');
-        this.setAttribute('aria-expanded', !mobileMenu.classList.contains('hidden'));
+        const expanded = this.getAttribute('aria-expanded') === 'true';
+        this.setAttribute('aria-expanded', !expanded);
+      });
+    }
+
+    // Animação do spinner
+    const escudo = document.querySelector('.escudo');
+    const spinner = document.querySelector('.escudo_spinner');
+    
+    if (escudo && spinner) {
+      escudo.addEventListener('mouseover', function() {
+        spinner.classList.remove('opacity-0');
+        escudo.classList.add('opacity-0');
+      });
+      
+      escudo.addEventListener('mouseout', function() {
+        spinner.classList.add('opacity-0');
+        escudo.classList.remove('opacity-0');
       });
     }
   });
