@@ -31,7 +31,7 @@ gem "image_processing", "~> 1.2"
 gem "mini_magick" # Alternativa mais leve ao rmagick
 
 # URLs amigáveis
-gem "friendly_id", "~> 5.4.0"
+gem "friendly_id", "~> 5.5.1"
 
 # Cache e filas
 gem "solid_cache"
